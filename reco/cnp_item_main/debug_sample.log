@@ -1,0 +1,139 @@
+CREATE DATABASE IF NOT EXISTS jli21
+
+USE jli21
+CREATE TEMPORARY FUNCTION cast_boolean AS 'com.walmart.labs.bfd.hive.GenericUDFCastBoolean'
+
+CREATE TEMPORARY FUNCTION collect AS 'com.walmart.labs.bfd.hive.GenericUDAFCollect'
+
+CREATE TEMPORARY FUNCTION concat_array_ws AS 'com.walmart.labs.bfd.hive.GenericUDFConcatArrayWs'
+
+CREATE TEMPORARY FUNCTION condense_multi_chars AS 'com.walmart.labs.bfd.hive.GenericUDFCondenseMultiChars'
+
+CREATE TEMPORARY FUNCTION encode_newline AS 'com.walmart.labs.bfd.hive.GenericUDFEncodeNewline'
+
+CREATE TEMPORARY FUNCTION get_ngrams AS 'com.walmart.labs.bfd.hive.GenericUDFGetNgrams'
+
+CREATE TEMPORARY FUNCTION get_tweet_time AS 'com.walmart.labs.bfd.hive.GenericUDFGetTweetTime'
+
+CREATE TEMPORARY FUNCTION get_wilson_confidence_interval AS 'com.walmart.labs.bfd.hive.GenericUDFGetWilsonConfidenceInterval'
+
+CREATE TEMPORARY FUNCTION greatest_n AS 'com.walmart.labs.bfd.hive.GenericUDAFGreatestN'
+
+CREATE TEMPORARY FUNCTION is_mostly_latin AS 'com.walmart.labs.bfd.hive.GenericUDFIsMostlyLatin'
+
+CREATE TEMPORARY FUNCTION json_array_to_map AS 'com.walmart.labs.bfd.hive.GenericUDFJsonArrayToMap'
+
+CREATE TEMPORARY FUNCTION least_n AS 'com.walmart.labs.bfd.hive.GenericUDAFLeastN'
+
+CREATE TEMPORARY FUNCTION lower_bound AS 'com.walmart.labs.bfd.hive.GenericUDFLowerBound'
+
+CREATE TEMPORARY FUNCTION split_json_array AS 'com.walmart.labs.bfd.hive.GenericUDFSplitJsonArray'
+
+CREATE TEMPORARY FUNCTION xml_quote AS 'com.walmart.labs.bfd.hive.GenericUDFXmlQuote'
+
+CREATE TEMPORARY FUNCTION zscore_to_percentile AS 'com.walmart.labs.bfd.hive.GenericUDFZTable'
+
+CREATE TEMPORARY FUNCTION ngrams AS 'com.walmart.labs.bfd.hive.GenericUDAFnGrams'
+
+CREATE TEMPORARY FUNCTION eucliean_distance AS 'com.walmart.labs.bfd.hive.GenericUDFEuclideanDistance'
+
+CREATE TEMPORARY FUNCTION euclidean_distance AS 'com.walmart.labs.bfd.hive.GenericUDFEuclideanDistance'
+
+CREATE TEMPORARY FUNCTION md5 AS 'com.walmart.labs.bfd.hive.GenericUDFMD5'
+
+CREATE TEMPORARY FUNCTION auto_increment AS 'com.walmart.labs.bfd.hive.GenericUDFAutoIncrement'
+set mapred.task.timeout 1800000
+set hive.exec.reducers.bytes.per.reducer=81920000
+set mapred.reduce.tasks=4
+set hive.exec.compress.output=false
+set hive.exec.dynamic.partition=true
+set hive.exec.dynamic.partition.mode=nonstrict
+set hive.exec.parallel=true
+set hive.auto.convert.join=true
+set hive.mapred.supports.subdirectories=true
+
+
+use jli21
+
+
+
+            -- partition_system_item_nbr is RECO item
+            --(SELECT system_item_nbr, seasonality_vst, start_of_month FROM ${hiveconf:seasonality_tbl} WHERE start_of_month='${hiveconf:seasonality_month}') a
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+drop table if exists reco_sample_stage13b
+
+create table reco_sample_stage13b as
+SELECT
+a.*
+FROM
+    (
+    SELECT
+        a.membership_nbr
+        , a.cardholder_nbr
+        , a.membership_create_date
+        , a.partition_system_item_nbr
+        , CASE WHEN b.num_items IS NULL THEN a.score ELSE a.score * (1+num_items) END as score
+    FROM
+        (
+        SELECT
+            a.*, b.category_nbr, b.sub_category_nbr 
+        FROM
+            (
+            SELECT
+                a.membership_nbr
+                , a.cardholder_nbr
+                , a.membership_create_date
+                , a.partition_system_item_nbr
+                , MAX(a.score) as score
+            FROM
+                (SELECT membership_nbr, cardholder_nbr, membership_create_date, system_item_nbr, rank() over (PARTITION BY membership_nbr, cardholder_nbr, membership_create_date, system_item_nbr ORDER BY score DESC) as rank, partition_system_item_nbr, score FROM jli21.reco_sample_stage1) a
+            WHERE a.rank <= 1
+            GROUP BY a.membership_nbr, a.cardholder_nbr, a.membership_create_date, a.partition_system_item_nbr
+            ) a
+        JOIN
+            sams_us_clubs.item_info b
+        ON a.partition_system_item_nbr = b.system_item_nbr
+        ) a
+    LEFT OUTER JOIN
+        (
+        SELECT 
+            membership_nbr, cardholder_nbr, membership_create_date, category_nbr, count(distinct system_item_nbr) AS num_items
+        FROM
+            (
+            SELECT a.membership_nbr, a.cardholder_nbr, a.membership_create_date, a.system_item_nbr, b.category_nbr, b.sub_category_nbr FROM jli21.trans_sample a JOIN sams_us_clubs.item_info b ON a.system_item_nbr = b.system_item_nbr
+            ) a
+        GROUP BY membership_nbr, cardholder_nbr, membership_create_date,  category_nbr
+        ) b
+    ON a.category_nbr = b.category_nbr
+    ) a
+LEFT OUTER JOIN
+    --(SELECT * FROM ${hiveconf:trans_tbl} WHERE campaign_month='${hiveconf:trans_partition}') b
+    jli21.trans_sample b
+    ON a.partition_system_item_nbr = b.system_item_nbr
+        AND a.membership_nbr = b.membership_nbr
+        AND a.cardholder_nbr = b.cardholder_nbr
+        AND a.membership_create_date = b.membership_create_date
+    WHERE b.system_item_nbr IS NULL 
+

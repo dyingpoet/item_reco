@@ -1,0 +1,4 @@
+Hi Jun,
+Modified the seasonality script to run bi-weekly and updated the dfs location too. We have data for both co_bought and seasonality for 2014-10-21.
+
+Table to refer is: pythia.cat_subcat_specific_seasonality_data_month

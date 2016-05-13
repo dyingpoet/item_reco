@@ -1,0 +1,36 @@
+Logging initialized using configuration in file:/etc/hive/conf.bfd-puppet/hive-log4j.properties
+Total jobs = 3
+Launching Job 1 out of 3
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_201512021745_4006120, Tracking URL = http://sv1-hp0302-01.sv.walmartlabs.com:50030/jobdetails.jsp?jobid=job_201512021745_4006120
+Kill Command = /opt/mapr/hadoop/hadoop-0.20.2/bin/../bin/hadoop job  -kill job_201512021745_4006120
+Hadoop job information for Stage-1: number of mappers: 3; number of reducers: 0
+2016-02-01 15:57:43,366 Stage-1 map = 0%,  reduce = 0%
+2016-02-01 15:57:57,866 Stage-1 map = 33%,  reduce = 0%, Cumulative CPU 6.57 sec
+2016-02-01 15:58:02,398 Stage-1 map = 67%,  reduce = 0%, Cumulative CPU 20.2 sec
+MapReduce Total cumulative CPU time: 20 seconds 200 msec
+Ended Job = job_201512021745_4006120
+Stage-3 is selected by condition resolver.
+Stage-2 is filtered out by condition resolver.
+Stage-4 is filtered out by condition resolver.
+Moving data to: maprfs:/user/jli21/tmp/hive_2016-02-01_15-57-36_136_9059116839056243492-1/-ext-10000
+Moving data to: /user/jli21/pythia/Workspaces/CNP/reco/2016-01-31/itemInfo/dump
+MapReduce Jobs Launched:
+Job 0: Map: 3   Cumulative CPU: 36.07 sec   MAPRFS Read: 580131177 MAPRFS Write: 68204933 SUCCESS
+Total MapReduce CPU Time Spent: 36 seconds 70 msec
+OK
+Time taken: 28.823 seconds
+Item info dumping was successful.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2016-01-31/landing/clubItemLandingDir does not exist.
+2016-02-01 15:58:08,5917 ERROR Cidcache fs/client/fileclient/cc/cidcache.cc:1283 Thread: 5640 Lookup of volume user.jli21 failed, error Connection reset by peer(104), CLDB: 10.93.131.130:7222 backing off ...
+Club-availability dummping was successful.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2016-01-31/landing/paidCardPreferClubLandingDir does not exist.
+Dumped the paid cards to hdfs: /user/jli21/pythia/Workspaces/CNP/reco/2016-01-31/landing/paidCardPreferClubLandingDir/.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2016-01-31/landing/allCardPreferClubLandingDir does not exist.
+Dumped all cards to hdfs: /user/jli21/pythia/Workspaces/CNP/reco/2016-01-31/landing/allCardPreferClubLandingDir/.
+Paid card club rolling succeeded!
+All card club rolling succeeded!
+The prep stage was done successfully.
+You have new mail in /var/spool/mail/jli21
+
+

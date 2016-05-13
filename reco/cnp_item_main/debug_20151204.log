@@ -1,0 +1,277 @@
+
+*** agg
+Input(s):
+Successfully read 21189542 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2015-12-02/tripleKey/paid"
+Successfully read 83336202 records from: "/user/pythia/Workspaces/SamsMEP/sams_online_dump"
+Successfully read 22083528417 records from: "/user/pythia/Workspaces/SamsMEP/customer_club_day_item_sales_with_sub_category_v2"
+
+Output(s):
+Successfully stored 0 records in: "/user/pythia/Workspaces/SamsMEP/trans_agg/cnp_member/2015-12-03/Decay/transactionAgg_cobought_studySet_subcatAll"
+
+
+/user/jli21/pythia/Workspaces/CNP/reco/2015-12-02/tripleKey/paid/part-r-00000
+44669^A10^A0001-01-01^A6236^A6236^A6236
+
+/user/pythia/Workspaces/SamsMEP/sams_online_dump
+2940325922^A10040^A738341346^A10^A87^A1^A45.0^A1.0^A2014-06-22
+
+/user/pythia/Workspaces/SamsMEP/customer_club_day_item_sales_with_sub_category_v2
+gzipped
+
+
+
+
+### aggregation of the time-decayed transaction/numVisits
+if [[ ! -e ${TOUCH1} ]]; then
+    $Pig -p MemCombined=$MemberTriplePaidCard \
+        -p TransOffline=$TransOffline \
+        -p TransOnline=$TransOnline \
+        -p OnlineTrans=$TransOnline \
+        -p DataStartT=$DataStartT \
+        -p DataEndT=$DataEndT \
+        -p EligibleStartT=$EligibleStartT \
+        -p EligibleEndT=$EligibleEndT \
+        -p today=$DT \
+        -p OutStudySet=$TransAgg \
+        -f ${SRC_AGG_DIR}/create_study_set_rec_online_offline_updateSC_item.pig 1> ${LOG_AGG_DIR}/create_study_set_rec_online_offline_updateSC_item.log 2>&1
+
+
+* jli21@offers-cnp00 ~/project/reco/src/production/item_reco/src/agg $ less create_study_set_rec_online_offline_updateSC_item.pig
+Mem0 = LOAD '$MemCombined' USING PigStorage('\u0001') AS (
+        membership_nbr: chararray,
+        membership_create_date: chararray,
+        membership_obsolete_date: chararray,
+        membership_type_code: int,
+        member_status_code: chararray,
+        plus_membership_ind: chararray,
+        pdcardholder_nbr: chararray,
+        pdcardholder_type_code: chararray,
+        pdcardholder_status_code: chararray,
+        pdcardholder_issuing_club_nbr: chararray,
+        pdcardholder_assigned_club_nbr: chararray,
+        pdcardholder_preferred_club_nbr: chararray,
+        cardholders:bag{(cardholder_nbr: chararray, cardholder_type_code: chararray, cardholder_status_code: chararray, issuing_club_nbr: chararray, assigned_club_nbr: chararray, preferred_club_nbr: chararray)}
+);
+
+-- Load the raw transaction data
+TransOnline00 = LOAD '$TransOnline' USING PigStorage('\u0001') AS (
+         order_nbr: chararray,
+         system_item_nbr: long,
+         membership_nbr: chararray,
+         card_holder_nbr: chararray,
+         category_nbr: int,
+         sub_category_nbr: int,
+         unit_retail_amt: float,
+         ordered_qty: float,
+         order_date: chararray
+);
+
+TransOffline00 = LOAD '$TransOffline' USING PigStorage('\u0001') AS (
+         visit_nbr: int,
+         club_nbr: int,
+         system_item_nbr: long,
+         household_id: long,
+         membership_nbr: chararray,
+         card_holder_nbr: chararray,
+         category_nbr: int,
+         sub_category_nbr: int,
+         retail_all: float,
+         unit_qty: double,
+         retail_per_item: float,
+         cost_per_item: double,
+         visit_date: chararray
+);
+
+
+* jli21@offers-cnp00 ~/project/reco/src/production/cnp_item_main $ less ../src/agg/create_study_set_rec_online_offline_updateSC_member.pig 
+Mem4 = LOAD '$MemCombined' USING PigStorage('\u0001') AS (
+        membership_nbr: chararray,
+        pdcardholder_nbr: chararray,
+        membership_create_date: chararray,
+        preferred_club: chararray,
+        assigned_club: chararray,
+        issued_club: chararray
+);
+
+
+
+
+
+
+
+### transaction normalization
+if [[ ! -e ${TOUCH2} ]]; then
+    $Pig -p inputScore=$TransAgg -p outputScore=$TransDataPct -p nQtl=$N_QTL -p TaskDir=${SRC_AGG_DIR} -f ${SRC_AGG_DIR}/qtlScore_item.pig  1> ${LOG_AGG_DIR}/qtlScore_item.log 2>&1
+    if [[ $? -ne 0 ]]; then echo "Step 2: transaction normalization failed!"; exit 2; else echo "Step 2: transaction normalization succeeded!"; touch ${TOUCH2}; fi
+    hive -e "USE $DATABASE; ALTER TABLE $TRANS_TBL ADD PARTITION (campaign_month='$TRANS_PARTITION') LOCATION '$TRANS_LOC'"
+
+### recommendation
+if [[ ! -e ${TOUCH3} ]]; then
+    hive -hiveconf Database=$DATABASE -hiveconf seasonality_tbl=$SEASONALITY_TBL -hiveconf cobought_dt=$COB_DT -hiveconf cobought_tbl=$COBOUGHT_TBL -hiveconf reco_blacklist=$RECO_BLACKLIST -hiveconf anchor_blacklist=$ANCHOR_BLACKLIST -hiveconf seasonality_month=$SEASONALITY_DT -hiveconf trans_tbl=$TRANS_TBL -hiveconf trans_partition=$TRANS_PARTITION -hiveconf item_reco_landing_dir=$Output -hiveconf member_type=$MEMBER_TYPE -f ${SRC_CORE_DIR}/CoboughtModelItem.hql 1> ${LOG_CORE_DIR}/CoboughtModelItem.log 2>&1
+    if [[ $? -ne 0 ]]; then echo "Step 3: Core recommendation failed!"; exit 3; else echo "Step 3: Core recommendation succeeded!"; touch ${TOUCH3}; fi
+else
+    echo "Step 3: Core recommendation was successfully run before!" 
+fi
+
+Successfully stored 0 records in: "/user/pythia/Workspaces/SamsMEP/trans_agg/cnp_member/2015-12-03/Decay/transactionAgg_cobought_studySet_subcatAll"
+reco_membership_param.cfg:export TransAgg=$OutputDir/trans_agg/${TYPE}/${DS_RUN}/${AGG_METHOD}/transactionAgg_cobought_studySet_subcatAll
+reco_membership_param.cfg:export TransDataPct=${TransAgg}"_"${N_QTL}"qtl"
+reco_membership_param.cfg:export TransDataPctAppend=${TransDataPct}"_append"
+
+
+
+FAILED: ParseException line 31:75 cannot recognize input near 'WHERE' 'start_of_month' '=' in join source
+
+
+alter table pythia.pis_member_item_trans_score_partition add partition (campaign_month='2015-12-03') location '/user/pythia/Workspaces/SamsMEP/trans_agg/cnp_member/2015-12-03/Decay/transactionAgg_cobought_studySet_subcatAll_10qtl';
+
+
+
+2015-12-07 16:48:21,649 [main] ERROR org.apache.pig.tools.grunt.Grunt - ERROR 1031: Incompatable schema: left is "membership_nbr:NULL,system_item_nbr:NULL,visit_date:NULL", right is "group::membership_nbr:chararray,group::card_holder_nbr:chararray,group::system_item_nbr:long,group::visit_date:chararray"
+
+
+hive -hiveconf Database=pythia -hiveconf seasonality_tbl=pythia.item_specific_seasonality_data_month -hiveconf cobought_dt=2015-12-01 -hiveconf cobought_tbl=pythia.item_level_cobought_cosine_scores_yearly -hiveconf reco_blacklist=/home/jli21/project/reco/src/production/item_reco/src/config/blacklist.system -hiveconf anchor_blacklist=/home/jli21/project/reco/src/production/item_reco/src/config/blacklist.system -hiveconf seasonality_month=2015-11-01 -hiveconf trans_tbl=pythia.pis_member_item_trans_score_partition -hiveconf trans_partition=2015-12-03 -hiveconf item_reco_landing_dir=/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_member/2015-12-03/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug -hiveconf member_type=overall -f /home/jli21/project/reco/src/production/item_reco/src/core/CoboughtModelItem.hql
+
+
+
+
+MapReduce Total cumulative CPU time: 21 seconds 170 msec
+Ended Job = job_201512021745_353885
+Stage-12 is selected by condition resolver.
+Stage-1 is filtered out by condition resolver.
+Execution log at: /tmp/jli21/jli21_20151208135454_23d191ed-9eb3-449c-97d6-98e71806bf4c.log
+2015-12-08 01:57:32     Starting to launch local task to process map join;      maximum memory = 932118528
+2015-12-08 01:57:32     Dump the hashtable into file: file:/tmp/jli21/hive_2015-12-08_13-54-06_788_5338533894041394333-1/-local-10005/HashTable-Stage-6/MapJoin-mapfile01--.hashtable
+2015-12-08 01:57:33     Upload 1 File to: file:/tmp/jli21/hive_2015-12-08_13-54-06_788_5338533894041394333-1/-local-10005/HashTable-Stage-6/MapJoin-mapfile01--.hashtable File size: 261
+2015-12-08 01:57:33     Dump the side-table into file: file:/tmp/jli21/hive_2015-12-08_13-54-06_788_5338533894041394333-1/-local-10005/HashTable-Stage-6/MapJoin-mapfile01--.hashtable
+2015-12-08 01:57:33     Uploaded 1 File to: file:/tmp/jli21/hive_2015-12-08_13-54-06_788_5338533894041394333-1/-local-10005/HashTable-Stage-6/MapJoin-mapfile01--.hashtable (260 bytes)
+2015-12-08 01:57:33     End of local task; Time Taken: 0.841 sec.
+Execution completed successfully
+MapredLocal task succeeded
+Launching Job 6 out of 7
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_201512021745_353946, Tracking URL = http://sv1-hp0302-01.sv.walmartlabs.com:50030/jobdetails.jsp?jobid=job_201512021745_353946
+Kill Command = /opt/mapr/hadoop/hadoop-0.20.2/bin/../bin/hadoop job  -kill job_201512021745_353946
+Hadoop job information for Stage-6: number of mappers: 1; number of reducers: 0
+2015-12-08 13:58:16,198 Stage-6 map = 100%,  reduce = 100%, Cumulative CPU 2.13 sec
+MapReduce Total cumulative CPU time: 2 seconds 130 msec
+Ended Job = job_201512021745_353946
+Moving data to: /user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_member/2015-12-03/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug
+2015-12-08 13:58:24,2723 ERROR JniCommon fs/client/fileclient/cc/jni_common.cc:2227 Thread: 25042 rename: File /user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_member/20, LookupFid rpc error = 2
+Failed with exception Invalid source or target
+FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.MoveTask
+MapReduce Jobs Launched: 
+Job 0: Map: 1   Cumulative CPU: 26.02 sec   MAPRFS Read: 336148693 MAPRFS Write: 138 SUCCESS
+Job 1: Map: 1   Cumulative CPU: 2.54 sec   MAPRFS Read: 667 MAPRFS Write: 138 SUCCESS
+Job 2: Map: 1  Reduce: 4   Cumulative CPU: 21.17 sec   MAPRFS Read: 827 MAPRFS Write: 728 SUCCESS
+Job 3: Map: 1   Cumulative CPU: 2.13 sec   MAPRFS Read: 2233 MAPRFS Write: 0 SUCCESS
+Total MapReduce CPU Time Spent: 51 seconds 860 msec
+
+
+hive> select system_item_nbr, seasonality_vst, start_of_month from pythia.item_specific_seasonality_data_month where start_of_month='2015-10-01' limit 10;
+33846239	0.9414759722135017	2015-10-01
+33848339	9.163802978235968E-4	2015-10-01
+33850409	0.9681528662420382	2015-10-01
+33850439	0.8160000000000001	2015-10-01
+
+hive> SELECT system_item_nbr, partition_system_item_nbr, score FROM pythia.item_level_cobought_cosine_scores_yearly WHERE DS = '2015-12-01' limit 3; 
+10001	21941896	0.00399968003839488
+10001	5630423	0.0038984058779272523
+10001	7208403	0.00287162293204301
+
+###SELECT system_item_nbr, partition_system_item_nbr, score FROM pythia.item_level_cobought_cosine_scores_yearly WHERE DS = '2015-12-01' AND membership_type_code = 'overall' AND region_nbr='all' limit 3;
+SELECT system_item_nbr, partition_system_item_nbr, score FROM pythia.item_level_cobought_cosine_scores_yearly WHERE DS = '2015-12-01' AND membership_type_code = 'all' AND region_nbr='all' limit 3;
+
+10001	21941896	0.00399968003839488
+10001	5630423	0.0038984058779272523
+10001	7208403	0.00287162293204301
+
+
+
+/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_member/2015-12-03/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug
+#empty
+
+Output
+/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_member/2015-12-03/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug
+RecoStudyScaled
+/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_member/2015-12-03/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_adj_study_scaled
+
+    > select * from pythia.pis_member_item_trans_score_partition where campaign_month='2015-12-03' limit 3;
+OK
+225580687	10	0001-01-01	62292	0.6	2015-12-03
+417829009	10	2007-06-20	62292	0.3	2015-12-03
+733810170	10	2014-05-15	62292	0.2	2015-12-03
+
+
+
+Prasanna
+hive> select * from pythia.pis_member_item_trans_score_partition where campaign_month='2015-12-03' and membership_nbr=799306444;
+799306444	10	2015-10-08	20731235	0.7	2015-12-03
+799306444	10	2015-10-08	31363638	1.0	2015-12-03
+799306444	10	2015-10-08	50245216	0.6	2015-12-03
+799306444	10	2015-10-08	51011391	0.7	2015-12-03
+799306444	10	2015-10-08	4730574	1.0	2015-12-03
+799306444	10	2015-10-08	10046	0.9	2015-12-03
+799306444	10	2015-10-08	40457581	0.2	2015-12-03
+799306444	10	2015-10-08	51098841	0.4	2015-12-03
+799306444	10	2015-10-08	2703407	0.9	2015-12-03
+799306444	10	2015-10-08	51750390	0.3	2015-12-03
+799306444	10	2015-10-08	51490850	0.4	2015-12-03
+799306444	10	2015-10-08	4670329	0.4	2015-12-03
+799306444	10	2015-10-08	51024156	0.1	2015-12-03
+
+
+
+* on
+use jli21;
+hive> select * from (select * from sample_member a left outer join (select * from sample_member limit 5) b on a.member = b.member and b.member IS NULL) a limit 10;
+396315707_10_2006-12-09	NULL
+102867991_10_0001-01-01	NULL
+334762861_10_2005-06-21	NULL
+308061944_10_2004-11-12	NULL
+662392786_11_2012-12-21	NULL
+614753325_10_2011-12-13	NULL
+17858291_10_0001-01-01	NULL
+723559696_13_0001-01-01	NULL
+419825732_12_0001-01-01	NULL
+548086644_10_2010-06-01	NULL
+
+    > select * from (select * from sample_member a left outer join (select * from sample_member limit 5) b on a.member = b.member and b.member IS NOT NULL) a limit 10;
+396315707_10_2006-12-09	396315707_10_2006-12-09
+102867991_10_0001-01-01	102867991_10_0001-01-01
+334762861_10_2005-06-21	334762861_10_2005-06-21
+308061944_10_2004-11-12	308061944_10_2004-11-12
+662392786_11_2012-12-21	662392786_11_2012-12-21
+614753325_10_2011-12-13	NULL
+17858291_10_0001-01-01	NULL
+723559696_13_0001-01-01	NULL
+419825732_12_0001-01-01	NULL
+548086644_10_2010-06-01	NULL
+
+* where
+    > select * from (select * from sample_member a left outer join (select * from sample_member limit 5) b on a.member = b.member where b.member IS NULL) a limit 10;
+614753325_10_2011-12-13	NULL
+17858291_10_0001-01-01	NULL
+723559696_13_0001-01-01	NULL
+419825732_12_0001-01-01	NULL
+548086644_10_2010-06-01	NULL
+532953718_10_0001-01-01	NULL
+631092269_10_2012-04-22	NULL
+483837381_10_2008-12-23	NULL
+542151717_10_2010-04-02	NULL
+414185710_10_2007-05-18	NULL
+
+    > select * from (select * from sample_member a left outer join (select * from sample_member limit 5) b on a.member = b.member where b.member IS NOT NULL) a limit 10;
+396315707_10_2006-12-09	396315707_10_2006-12-09
+102867991_10_0001-01-01	102867991_10_0001-01-01
+334762861_10_2005-06-21	334762861_10_2005-06-21
+308061944_10_2004-11-12	308061944_10_2004-11-12
+662392786_11_2012-12-21	662392786_11_2012-12-21
+
+
+
+
+
+
+
+

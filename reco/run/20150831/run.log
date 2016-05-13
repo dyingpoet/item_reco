@@ -1,0 +1,72 @@
+Logging initialized using configuration in file:/etc/hive/conf.bfd-puppet/hive-log4j.properties
+Total jobs = 3
+Launching Job 1 out of 3
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_201507192138_1856135, Tracking URL = http://mapr380.sv.walmartlabs.com:50030/jobdetails.jsp?jobid=job_201507192138_1856135
+Kill Command = /opt/mapr/hadoop/hadoop-0.20.2/bin/../bin/hadoop job  -kill job_201507192138_1856135
+Hadoop job information for Stage-1: number of mappers: 3; number of reducers: 0
+2015-08-31 10:24:34,010 Stage-1 map = 0%,  reduce = 0%
+2015-08-31 10:24:45,731 Stage-1 map = 33%,  reduce = 0%, Cumulative CPU 5.18 sec
+MapReduce Total cumulative CPU time: 5 seconds 180 msec
+Ended Job = job_201507192138_1856135
+Stage-3 is selected by condition resolver.
+Stage-2 is filtered out by condition resolver.
+Stage-4 is filtered out by condition resolver.
+Moving data to: maprfs:/user/jli21/tmp/hive_2015-08-31_10-24-17_643_652928960828888124-1/-ext-10000
+Moving data to: /user/jli21/pythia/Workspaces/CNP/reco/2015-08-30/itemInfo/dump
+MapReduce Jobs Launched:
+Job 0: Map: 3   Cumulative CPU: 34.85 sec   MAPRFS Read: 564484905 MAPRFS Write: 66040058 SUCCESS
+Total MapReduce CPU Time Spent: 34 seconds 850 msec
+OK
+Time taken: 48.96 seconds
+Item info dumping was successful.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2015-08-30/landing/clubItemLandingDir does not exist.
+Club-availability dummping was successful.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2015-08-30/landing/paidCardPreferClubLandingDir does not exist.
+Dumped the paid cards to hdfs: /user/jli21/pythia/Workspaces/CNP/reco/2015-08-30/landing/paidCardPreferClubLandingDir/.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2015-08-30/landing/allCardPreferClubLandingDir does not exist.
+Dumped all cards to hdfs: /user/jli21/pythia/Workspaces/CNP/reco/2015-08-30/landing/allCardPreferClubLandingDir/.
+Paid card club rolling succeeded!
+
+All card club rolling succeeded!
+Club item popularity rolling succeeded!
+Member item popularity rolling succeeded!
+Card item popularity rolling succeeded!
+Mapping from a sub-cat to the most popular item succeeded!
+The prep stage was done successfully.
+You have new mail in /var/spool/mail/jli21
+
+
+
+Success!
+
+Job Stats (time in seconds):
+JobId   Maps    Reduces MaxMapTime      MinMapTIme      AvgMapTime      MedianMapTime   MaxReduceTime   MinReduceTime   AvgReduceTime   MedianReducetime        Alias   Feature Outputs
+job_201507192138_1878417        1       0       12      12      12      12      0       0       0       0       prodIdMap       MAP_ONLY        
+job_201507192138_1878423        9500    1000    341     48      127     125     871     447     674     696     reco,recoRaw,recoRawGrp,recoRawLimit,recoRawOrder       GROUP_BY        
+job_201507192138_1880030        1016    1000    267     26      49      48      201     38      134     153     cardClub,recoClub,recoClubJoin  HASH_JOIN       
+job_201507192138_1880223        1001    1000    166     33      86      86      164     32      97      108     recoItem,recoItemJoin,sc2item   HASH_JOIN       
+job_201507192138_1880511        991     1000    116     21      47      48      573     9       75      48      itemInfo,recoItemAttach0,recoItemJoinInfo       HASH_JOIN       
+job_201507192138_1880958        926     1000    238     36      104     103     418     162     290     310     recoItemAttach,recoItemAttach0Grp,recoItemAttach0Limit,recoItemAttach0Order,recoItemWeekly,recoItemWeekly0,recoItemWeekly0Join  REPLICATED_JOIN,GROUP_BY,STREAMING      
+job_201507192138_1881352        1000    400     224     51      90      90      290     199     227     228     recoGrp,recoItems,recoLimit,recoTop     GROUP_BY        
+job_201507192138_1881702        400     400     191     67      115     112     239     116     167     170     cardholders,recoMemGrp,recoOut  GROUP_BY        /user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_memberCard/2015-08-31/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_cnp.gz,
+
+Input(s):
+Successfully read 49139564565 records from: "/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_memberCard/2015-08-31/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_adj_study_scaled"
+Successfully read 104409689 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2015-08-30/tripleKey/all"
+Successfully read 887726 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2015-08-30/preference/clubSubcat2Item"
+Successfully read 1635534 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2015-08-30/itemInfo/dump"
+Successfully read 62018 records from: "/user/pythia/Workspaces/SamsMEP/mapping/systemItemNbr_catalogItemId_map/ds=2014-11-16-0600"
+
+Output(s):
+Successfully stored 20098949 records in: "/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_memberCard/2015-08-31/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_cnp.gz"
+
+Counters:
+Total records written : 20098949
+Total bytes written : 0
+Spillable Memory Manager spill count : 0
+Total bags proactively spilled: 195
+Total records proactively spilled: 1066467326
+
+
+

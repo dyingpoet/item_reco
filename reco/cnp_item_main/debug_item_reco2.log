@@ -1,0 +1,86 @@
+CREATE DATABASE IF NOT EXISTS jli21
+
+USE jli21
+CREATE TEMPORARY FUNCTION cast_boolean AS 'com.walmart.labs.bfd.hive.GenericUDFCastBoolean'
+
+CREATE TEMPORARY FUNCTION collect AS 'com.walmart.labs.bfd.hive.GenericUDAFCollect'
+
+CREATE TEMPORARY FUNCTION concat_array_ws AS 'com.walmart.labs.bfd.hive.GenericUDFConcatArrayWs'
+
+CREATE TEMPORARY FUNCTION condense_multi_chars AS 'com.walmart.labs.bfd.hive.GenericUDFCondenseMultiChars'
+
+CREATE TEMPORARY FUNCTION encode_newline AS 'com.walmart.labs.bfd.hive.GenericUDFEncodeNewline'
+
+CREATE TEMPORARY FUNCTION get_ngrams AS 'com.walmart.labs.bfd.hive.GenericUDFGetNgrams'
+
+CREATE TEMPORARY FUNCTION get_tweet_time AS 'com.walmart.labs.bfd.hive.GenericUDFGetTweetTime'
+
+CREATE TEMPORARY FUNCTION get_wilson_confidence_interval AS 'com.walmart.labs.bfd.hive.GenericUDFGetWilsonConfidenceInterval'
+
+CREATE TEMPORARY FUNCTION greatest_n AS 'com.walmart.labs.bfd.hive.GenericUDAFGreatestN'
+
+CREATE TEMPORARY FUNCTION is_mostly_latin AS 'com.walmart.labs.bfd.hive.GenericUDFIsMostlyLatin'
+
+CREATE TEMPORARY FUNCTION json_array_to_map AS 'com.walmart.labs.bfd.hive.GenericUDFJsonArrayToMap'
+
+CREATE TEMPORARY FUNCTION least_n AS 'com.walmart.labs.bfd.hive.GenericUDAFLeastN'
+
+CREATE TEMPORARY FUNCTION lower_bound AS 'com.walmart.labs.bfd.hive.GenericUDFLowerBound'
+
+CREATE TEMPORARY FUNCTION split_json_array AS 'com.walmart.labs.bfd.hive.GenericUDFSplitJsonArray'
+
+CREATE TEMPORARY FUNCTION xml_quote AS 'com.walmart.labs.bfd.hive.GenericUDFXmlQuote'
+
+CREATE TEMPORARY FUNCTION zscore_to_percentile AS 'com.walmart.labs.bfd.hive.GenericUDFZTable'
+
+CREATE TEMPORARY FUNCTION ngrams AS 'com.walmart.labs.bfd.hive.GenericUDAFnGrams'
+
+CREATE TEMPORARY FUNCTION eucliean_distance AS 'com.walmart.labs.bfd.hive.GenericUDFEuclideanDistance'
+
+CREATE TEMPORARY FUNCTION euclidean_distance AS 'com.walmart.labs.bfd.hive.GenericUDFEuclideanDistance'
+
+CREATE TEMPORARY FUNCTION md5 AS 'com.walmart.labs.bfd.hive.GenericUDFMD5'
+
+CREATE TEMPORARY FUNCTION auto_increment AS 'com.walmart.labs.bfd.hive.GenericUDFAutoIncrement'
+set mapred.task.timeout 1800000
+set hive.exec.reducers.bytes.per.reducer=81920000
+set mapred.reduce.tasks=4
+set hive.exec.compress.output=false
+set hive.exec.dynamic.partition=true
+set hive.exec.dynamic.partition.mode=nonstrict
+set hive.exec.parallel=true
+set hive.auto.convert.join=true
+set hive.mapred.supports.subdirectories=true
+
+
+
+
+drop table if exists jli21.debug_item_reco2
+
+create table jli21.debug_item_reco2 as
+    SELECT 
+        b.membership_nbr
+        , b.cardholder_nbr
+        , b.membership_create_date
+        , a.partition_system_item_nbr
+        , a.score * b.score  as score
+    FROM 
+    (
+        SELECT
+            a.system_item_nbr
+            , a.seasonality_vst * b.score as score
+            , b.partition_system_item_nbr
+        FROM
+            --(SELECT system_item_nbr, seasonality_vst, start_of_month FROM pythia.sams_combined_global_seasonality_by_month_item WHERE start_of_month='${hiveconf:seasonality_month}') a
+            (SELECT system_item_nbr, seasonality_vst, start_of_month FROM ${hiveconf:seasonality_tbl} WHERE start_of_month='${hiveconf:seasonality_month}') a
+            --(SELECT system_item_nbr, seasonality_vst, start_of_month FROM pythia.item_specific_seasonality_data_month WHERE start_of_month='2015-11-01') a
+        JOIN
+            (SELECT system_item_nbr, partition_system_item_nbr, score FROM ${hiveconf:cobought_tbl} WHERE ds='${hiveconf:cobought_dt}' AND membership_type_code='${hiveconf:member_type}' AND region_nbr='all' AND system_item_nbr NOT IN (${hiveconf:anchor_blacklist}) AND partition_system_item_nbr NOT IN (${hiveconf:reco_blacklist}) ) b
+        ON a.system_item_nbr = b.system_item_nbr
+    ) a
+    JOIN 
+    --(SELECT * FROM pythia.pis_member_item_trans_score_partition WHERE campaign_month='${hiveconf:trans_partition}') b
+    (SELECT * FROM ${hiveconf:trans_tbl} WHERE campaign_month='${hiveconf:trans_partition}') b
+    ON a.system_item_nbr = b.system_item_nbr
+
+

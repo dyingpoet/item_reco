@@ -1,0 +1,158 @@
+#! /bin/bash
+
+
+echo "start the prep stage!"
+
+if ! test -d ${LOG_DIR}; then mkdir -p ${LOG_DIR}; fi
+if ! test -d ${LOG_SUPPORT_DIR}; then mkdir -p ${LOG_SUPPORT_DIR}; fi
+if ! test -d ${LOG_PREP_DIR}; then mkdir -p ${LOG_PREP_DIR}; fi
+if ! test -d ${LOG_AGG_DIR}; then mkdir -p ${LOG_AGG_DIR}; fi
+if ! test -d ${LOG_CORE_DIR}; then mkdir -p ${LOG_CORE_DIR}; fi
+if ! test -d ${LOG_POST_DIR}; then mkdir -p ${LOG_POST_DIR}; fi
+if ! test -d ${LOG_OUTPUT_DIR}; then mkdir -p ${LOG_OUTPUT_DIR}; fi
+
+### generate prodId mapping
+
+
+### dump item_info
+if ! test -e ${LOG_PREP_DIR}/touch_itemInfo_dump; then 
+    hadoop fs -rmr $ItemInfoDump
+    hadoop fs -mkdir $ItemInfoDump
+    hive -e "SET hive.exec.compress.output=false;
+                SET mapred.output.compression.codec=org.apache.hadoop.io.compress.BZip2Codec;
+                set hive.exec.dynamic.partition=true;
+                set hive.exec.dynamic.partition.mode=nonstrict;
+                set hive.exec.parallel=true;
+                insert overwrite directory '${ItemInfoDump}' select system_item_nbr,category_nbr,sub_category_nbr,customer_item_nbr,consumer_item_desc,product_desc from sams_us_clubs.item_info;"
+                #insert overwrite directory '${ItemInfoDump}' select system_item_nbr,category_nbr,mdse_subcatg_nbr,customer_item_nbr,consumer_item_desc,product_desc from sams_us_clubs.item_info;"
+    if [[ $? -ne 0 ]]; then echo "Item info dummping failed!"; hadoop fs -rmr ${ItemInfoDump}; exit 1; else echo "Item info dumping was successful."; fi
+    touch ${LOG_PREP_DIR}/touch_itemInfo_dump
+else
+    echo "Item info dummping was run successfully before!"
+fi
+
+### dump club_avail <item,club>
+if ! hadoop fs -test -d ${ClubItemLandingDir}; then
+    hadoop fs -mkdir ${ClubItemLandingDir}
+    hive -hiveconf club_item_landing_dir=$ClubItemLandingDir \
+        -hiveconf inventory_ds=$INVENTORY_SNAPSHOT_DATE \
+        -hiveconf item_info_ds=$ITEM_INFO_SNAPSHOT_DATE \
+        -hiveconf Database=$Database \
+        -hiveconf club_item_inventory_history_table=$InventoryHistTbl \
+        -hiveconf sams_membership_dim_table=$SamsMembershipDimTbl \
+        -hiveconf sams_cardholder_dim_table=$SamsCardholderDimTbl \
+        -hiveconf ds_obsolete_date_lb=$OBSOLETE_DATE \
+        -hiveconf item_info=$ItemInfoTbl \
+        -f ${SRC_PREP_DIR}/club_avail.hql 1>${LOG_PREP_DIR}/club_avail.log 2>&1
+    if [[ $? -ne 0 ]]; then echo "Club-availability dummping failed!"; hadoop fs -rmr ${ClubItemLandingDir}; exit 1; else echo "Club-availability dummping was successful."; fi
+else
+    echo "Club-availability dummping was run successfully before!"
+fi
+
+### dump card's preferred club
+# 1. paid card
+if ! hadoop fs -test -d ${PaidCardPreferClubLandingDir}; then
+    hadoop fs -mkdir ${PaidCardPreferClubLandingDir}
+    hive -f ${SRC_PREP_DIR}/member_pcard_fetch.hql -hiveconf sams_membership_dim_table=$SamsMembershipDimTbl -hiveconf sams_cardholder_dim_table=$SamsCardholderDimTbl -hiveconf Database=$Database -hiveconf paid_card_landing_dir=$PaidCardPreferClubLandingDir -hiveconf ds_obsolete_date_lb=$OBSOLETE_DATE 1>${LOG_PREP_DIR}/member_pcard_fetch.log 2>&1 
+    if [[ $? -ne 0 ]]; then echo "Paid cards dummping failed!"; hadoop fs -rmr ${PaidCardPreferClubLandingDir}; exit 1; else echo "Dumped the paid cards to hdfs: ${PaidCardPreferClubLandingDir}."; fi
+else
+    echo "Paid cards dummping dummping was run successfully before!"
+fi
+
+# 2. all cards
+if ! hadoop fs -test -d ${AllCardPreferClubLandingDir}; then
+    hadoop fs -mkdir ${AllCardPreferClubLandingDir}
+    hive -f ${SRC_PREP_DIR}/member_all_card_fetch.hql -hiveconf sams_membership_dim_table=$SamsMembershipDimTbl -hiveconf sams_cardholder_dim_table=$SamsCardholderDimTbl -hiveconf Database=$Database -hiveconf all_card_landing_dir=$AllCardPreferClubLandingDir -hiveconf ds_obsolete_date_lb=$OBSOLETE_DATE 1>${LOG_PREP_DIR}/member_all_card_fetch.log 2>&1  
+    if [[ $? -ne 0 ]]; then echo "All cards dummping failed!"; hadoop fs -rmr ${AllCardPreferClubLandingDir}; exit 1; else echo "Dumped all cards to hdfs: ${AllCardPreferClubLandingDir}."; fi
+else
+    echo "All cards dummping was run successfully before!"
+fi
+
+
+### generate triple golden key + club
+# 1. paid card
+if [[ ! -e ${LOG_PREP_DIR}/touch_paid_card_club ]]; then
+    $Pig -p memberCardsLoc=$PaidCardPreferClubLandingDir -p memberCardUniq=$MemberTriplePaidCard -p memberCardUniqActive=$MemberTripleActiveCard -f ${SRC_PREP_DIR}/uniq_card_flt.pig 1>${LOG_PREP_DIR}/uniq_card_flt.log 2>&1
+    if [[ $? -ne 0 ]]; then echo "Paid card club rolling failed!"; exit 2; else echo "Paid card club rolling succeeded!"; touch ${LOG_PREP_DIR}/touch_paid_card_club; fi
+else
+    echo "Paid card club rolling was successfully run before!" 
+fi
+
+##pig -p tripleKey=/user/jli21/pythia/Workspaces/CNP/reco/$DT/tripleKey/paid -f uniq_card_flt_profile.pig
+
+
+# 2. all cards
+if [[ ! -e ${LOG_PREP_DIR}/touch_all_card_club ]]; then
+    $Pig -p memberCardsLoc=$AllCardPreferClubLandingDir -p memberCardUniq=$MemberTripleAllCard -f ${SRC_PREP_DIR}/uniq_all_card_flt.pig 1>${LOG_PREP_DIR}/uniq_all_card_flt.log 2>&1
+    if [[ $? -ne 0 ]]; then echo "All card club rolling failed!"; exit 2; else echo "All card club rolling succeeded!"; touch ${LOG_PREP_DIR}/touch_all_card_club; fi
+else
+    echo "All card club rolling was successfully run before!" 
+fi
+
+
+
+#### item club popularity
+#if [[ ! -e ${LOG_PREP_DIR}/touch_club_item_popularity ]]; then
+#    $Pig -p TransOnline=$TransOnline \
+#        -p TransOffline=$TransOffline \
+#        -p ItemSubCatMapping=$ItemInfoSnapshot \
+#        -p OutputGlobalPref=$ItemPrefClub \
+#        -p DataStartT=$DataStartT \
+#        -p DataEndT=$DataEndT \
+#        -p TaskDir=${SRC_PREP_DIR} \
+#        -f ${SRC_PREP_DIR}/club_item_popularity.pig 1>${LOG_PREP_DIR}/club_item_popularity.log 2>&1
+#    if [[ $? -ne 0 ]]; then echo "Club item popularity rolling failed!"; exit 2; else echo "Club item popularity rolling succeeded!"; touch ${LOG_PREP_DIR}/touch_club_item_popularity; fi
+#else
+#    echo "Club item popularity rolling was successfully run before!" 
+#fi
+#
+#
+#
+#### item member popularity
+#if [[ ! -e ${LOG_PREP_DIR}/touch_member_item_popularity ]]; then
+#    $Pig -p MemCombined=$MemberTriplePaidCard     -p TransOnline=$TransOnline \
+#        -p TransOffline=$TransOffline \
+#        -p ItemSubCatMapping=$ItemInfoSnapshot \
+#        -p DateLB=${DateLB} \
+#        -p DateUB=${DateUB} \
+#        -p SPLB=${SPLB} \
+#        -p SPUB=${SPUB} \
+#        -p SplitDate=${SplitDate} \
+#        -p OutputMemberPref=$ItemPrefMembership \
+#        -f ${SRC_PREP_DIR}/item_preference_membership.pig 1>${LOG_PREP_DIR}/item_preference_membership.log 2>&1
+#    if [[ $? -ne 0 ]]; then echo "Member item popularity rolling failed!"; exit 2; else echo "Member item popularity rolling succeeded!"; touch ${LOG_PREP_DIR}/touch_member_item_popularity; fi
+#else
+#    echo "Member item popularity rolling was successfully run before!" 
+#fi
+#
+#if [[ ! -e ${LOG_PREP_DIR}/touch_card_item_popularity ]]; then
+#    $Pig -p MemCombined=$MemberTripleAllCard     -p TransOnline=$TransOnline \
+#        -p TransOffline=$TransOffline \
+#        -p ItemSubCatMapping=$ItemInfoSnapshot \
+#        -p DateLB=${DateLB} \
+#        -p DateUB=${DateUB} \
+#        -p SPLB=${SPLB} \
+#        -p SPUB=${SPUB} \
+#        -p SplitDate=${SplitDate} \
+#        -p OutputMemberPref=$ItemPrefCardholder \
+#        -f ${SRC_PREP_DIR}/item_preference_cardholder.pig  1>${LOG_PREP_DIR}/item_preference_cardholder.log 2>&1
+#    if [[ $? -ne 0 ]]; then echo "Card item popularity rolling failed!"; exit 2; else echo "Card item popularity rolling succeeded!"; touch ${LOG_PREP_DIR}/touch_card_item_popularity; fi
+#else
+#    echo "Card item popularity rolling was successfully run before!" 
+#fi
+#
+#
+#
+#### sc2item preference, generate <club,subcat,item>
+#if [[ ! -e ${LOG_PREP_DIR}/touch_subcat_to_item ]]; then
+#    $Pig -p clubAvail=$ClubItemLandingDir -p itemClubPopularity=$ItemPrefClub -p popularSubcat2Item=$ClubSubcat2Item -f ${SRC_PREP_DIR}/sc2item.pig 1>${LOG_PREP_DIR}/sc2item.log 2>&1
+#    if [[ $? -ne 0 ]]; then echo "Mapping from a sub-cat to the most popular item failed!"; exit 2; else echo "Mapping from a sub-cat to the most popular item succeeded!"; touch ${LOG_PREP_DIR}/touch_subcat_to_item; fi
+#else
+#    echo "Mapping from a sub-cat to the most popular item was successfully run before!" 
+#fi
+
+
+
+echo "The prep stage was done successfully."
+
+

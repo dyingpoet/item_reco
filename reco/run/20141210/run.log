@@ -1,0 +1,46 @@
+MapReduce Jobs Launched:
+Job 0: Map: 2  Reduce: 1   Cumulative CPU: 53.99 sec   MAPRFS Read: 610959146 MAPRFS Write: 90653923 SUCCESS
+Total MapReduce CPU Time Spent: 53 seconds 990 msec
+OK
+Time taken: 60.89 seconds
+The cobought score was already there. No action needed.
+Number of RECO subcat: 2562
+The seasonality table was already there. No action needed.
+The weekly table was already there. No action needed.
+start the prep stage!
+rmr: cannot remove /user/jli21/pythia/Workspaces/CNP/reco/2014-12-09/itemInfo/dump: No such file or directory.
+Logging initialized using configuration in file:/etc/hive/conf.bfd-puppet/hive-log4j.properties
+Hive history file=/data1/hive/jli21/hive_job_log_jli21_201412102222_1908770556.txt
+Total MapReduce jobs = 2
+Launching Job 1 out of 2
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_201412091829_40605, Tracking URL = http://mapr380.sv.walmartlabs.com:50030/jobdetails.jsp?jobid=job_201412091829_40605
+Kill Command = /opt/mapr/hadoop/hadoop-0.20.2/bin/../bin/hadoop job  -Dmapred.job.tracker=maprfs:/// -kill job_201412091829_40605
+Hadoop job information for Stage-1: number of mappers: 2; number of reducers: 0
+2014-12-10 22:23:23,057 Stage-1 map = 0%,  reduce = 0%
+2014-12-10 22:23:48,003 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 38.69 sec
+MapReduce Total cumulative CPU time: 38 seconds 690 msec
+Ended Job = job_201412091829_40605
+Ended Job = 1541563615, job is filtered out (removed at runtime).
+Moving data to: maprfs:/user/jli21/tmp/hive_2014-12-10_22-23-04_210_1817047303317340195/-ext-10000
+Moving data to: /user/jli21/pythia/Workspaces/CNP/reco/2014-12-09/itemInfo/dump
+1560181 Rows loaded to /user/jli21/pythia/Workspaces/CNP/reco/2014-12-09/itemInfo/dump
+MapReduce Jobs Launched:
+Job 0: Map: 2   Cumulative CPU: 38.69 sec   MAPRFS Read: 529829688 MAPRFS Write: 61958746 SUCCESS
+Total MapReduce CPU Time Spent: 38 seconds 690 msec
+OK
+Time taken: 49.189 seconds
+Item info dumping was successful.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2014-12-09/landing/clubItemLandingDir does not exist.
+Club-availability dummping was successful.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2014-12-09/landing/paidCardPreferClubLandingDir does not exist.
+Dumped the paid cards to hdfs: /user/jli21/pythia/Workspaces/CNP/reco/2014-12-09/landing/paidCardPreferClubLandingDir/.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2014-12-09/landing/allCardPreferClubLandingDir does not exist.
+Dumped all cards to hdfs: /user/jli21/pythia/Workspaces/CNP/reco/2014-12-09/landing/allCardPreferClubLandingDir/.
+Paid card club rolling succeeded!
+All card club rolling succeeded!
+Club item popularity rolling succeeded!
+Member item popularity rolling succeeded!
+Card item popularity rolling succeeded!
+Mapping from a sub-cat to the most popular item succeeded!
+The prep stage was done successfully.

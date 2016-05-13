@@ -1,0 +1,117 @@
+Ended Job = job_201412091829_829319
+MapReduce Jobs Launched:
+Job 0: Map: 10   Cumulative CPU: 21.08 sec   MAPRFS Read: 1733172 MAPRFS Write: 379818 SUCCESS
+Total MapReduce CPU Time Spent: 21 seconds 80 msec
+OK
+Time taken: 38.334 seconds
+The seasonality table has been generated!
+Logging initialized using configuration in file:/etc/hive/conf.bfd-puppet/hive-log4j.properties
+Hive history file=/data1/hive/jli21/hive_job_log_jli21_201501042201_1905453107.txt
+OK
+Time taken: 25.512 seconds
+The weekly table has been generated!
+start the prep stage!
+rmr: cannot remove /user/jli21/pythia/Workspaces/CNP/reco/2015-01-03/itemInfo/dump: No such file or directory.
+Logging initialized using configuration in file:/etc/hive/conf.bfd-puppet/hive-log4j.properties
+Hive history file=/data1/hive/jli21/hive_job_log_jli21_201501042202_1332016870.txt
+Total MapReduce jobs = 2
+Launching Job 1 out of 2
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_201412091829_829387, Tracking URL = http://mapr380.sv.walmartlabs.com:50030/jobdetails.jsp?jobid=job_201412091829_829387
+Kill Command = /opt/mapr/hadoop/hadoop-0.20.2/bin/../bin/hadoop job  -Dmapred.job.tracker=maprfs:/// -kill job_201412091829_829387
+Hadoop job information for Stage-1: number of mappers: 2; number of reducers: 0
+2015-01-04 22:02:37,459 Stage-1 map = 0%,  reduce = 0%
+2015-01-04 22:02:58,352 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 36.65 sec
+MapReduce Total cumulative CPU time: 36 seconds 650 msec
+Ended Job = job_201412091829_829387
+Ended Job = 1116993423, job is filtered out (removed at runtime).
+Moving data to: maprfs:/user/jli21/tmp/hive_2015-01-04_22-02-20_786_1156302702822426370/-ext-10000
+Moving data to: /user/jli21/pythia/Workspaces/CNP/reco/2015-01-03/itemInfo/dump
+1566632 Rows loaded to /user/jli21/pythia/Workspaces/CNP/reco/2015-01-03/itemInfo/dump
+MapReduce Jobs Launched:
+Job 0: Map: 2   Cumulative CPU: 36.65 sec   MAPRFS Read: 532355053 MAPRFS Write: 62341408 SUCCESS
+Total MapReduce CPU Time Spent: 36 seconds 650 msec
+OK
+Time taken: 43.063 seconds
+Item info dumping was successful.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2015-01-03/landing/clubItemLandingDir does not exist.
+Club-availability dummping was successful.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2015-01-03/landing/paidCardPreferClubLandingDir does not exist.
+Dumped the paid cards to hdfs: /user/jli21/pythia/Workspaces/CNP/reco/2015-01-03/landing/paidCardPreferClubLandingDir/.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2015-01-03/landing/allCardPreferClubLandingDir does not exist.
+Dumped all cards to hdfs: /user/jli21/pythia/Workspaces/CNP/reco/2015-01-03/landing/allCardPreferClubLandingDir/.
+Paid card club rolling succeeded!
+All card club rolling succeeded!
+Club item popularity rolling succeeded!
+Member item popularity rolling succeeded!
+Card item popularity rolling succeeded!
+Mapping from a sub-cat to the most popular item succeeded!
+The prep stage was done successfully.
+
+
+
+
+
+
+
+
+Membership-level recommendation scoring pipeline started at 2015-01-05 01:46:04.
+Step 1: transaction agg succeeded!
+Step 2: transaction normalization succeeded!
+Step 3: Core recommendation succeeded!
+Step 5: Remind succeeded!
+Step 6: Subcat scoping succeeded!
+1.6183927
+Step 7: Score normalization succeeded!
+Deleted maprfs:/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_member/2015-01-04/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug
+Deleted maprfs:/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_member/2015-01-04/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_adj
+Deleted maprfs:/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_member/2015-01-04/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_adj_study
+Recommendation scores can be found at /user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_member/2015-01-04/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_adj_study_scaled.
+Membership-level recommendation scoring pipeline done at 2015-01-05 08:09:01.
+The membership-level pipeline had been successfully run before. Please check!
+jli21@offers-cnp00 ~/project/reco/src/production/run/20150104 $ less ../../../../log/2015-01-03/main_scoring_thread_cardholder.log 
+Cardholder-level recommendation scoring pipeline started at 2015-01-05 01:46:04.
+Step 1: transaction agg succeeded!
+Step 2: transaction normalization succeeded!
+Step 3: Core recommendation succeeded!
+Step 5: Remind succeeded!
+Step 6: Subcat scoping succeeded!
+1.6183927
+Step 7: Score normalization succeeded!
+Deleted maprfs:/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_memberCard/2015-01-04/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug
+Deleted maprfs:/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_memberCard/2015-01-04/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_adj
+Deleted maprfs:/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_memberCard/2015-01-04/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_adj_study
+Recommendation scores can be found at /user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_memberCard/2015-01-04/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_adj_study_scaled.
+Cardholder-level recommendation scoring pipeline done at 2015-01-05 10:01:04.
+The cardholder-level pipeline had been successfully run before. Please check!
+
+
+
+
+Input(s):
+Successfully read 21731398 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2015-01-03/tripleKey/paid"
+Successfully read 43964674815 records from: "/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_member/2015-01-04/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_adj_study_scaled"
+Successfully read 870672 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2015-01-03/preference/clubSubcat2Item"
+Successfully read 1566632 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2015-01-03/itemInfo/dump"
+Successfully read 62018 records from: "/user/pythia/Workspaces/SamsMEP/mapping/systemItemNbr_catalogItemId_map/ds=2014-11-16-0600"
+
+Output(s):
+Successfully stored 20221552 records in: "/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_member/2015-01-04/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_cnp.gz"
+
+
+Input(s):
+Successfully read 50153460068 records from: "/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_memberCard/2015-01-04/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_adj_study_scaled"
+Successfully read 107332821 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2015-01-03/tripleKey/all"
+Successfully read 870672 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2015-01-03/preference/clubSubcat2Item"
+Successfully read 1566632 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2015-01-03/itemInfo/dump"
+Successfully read 62018 records from: "/user/pythia/Workspaces/SamsMEP/mapping/systemItemNbr_catalogItemId_map/ds=2014-11-16-0600"
+
+Output(s):
+Successfully stored 20212485 records in: "/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_memberCard/2015-01-04/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_cnp.gz"
+
+
+
+
+
+/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_member/2015-01-04/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_cnp.gz
+/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_memberCard/2015-01-04/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_cnp.gz

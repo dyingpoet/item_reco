@@ -1,0 +1,4 @@
+input=/user/ucidscs/Databases/sams_member_scores_WMX
+medians=/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp/member/2014-10-31/Decay/reward_median
+quantiles=/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp/member/2014-10-31/Decay/reward_quantiles
+mean=/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp/member/2014-10-31/Decay/reward_mean

@@ -1,0 +1,9 @@
+SCORE_INPUT_MEMBERSHIP=/user/jli21/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp/member/20141008Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_cnp_left.gz
+SCORE_SAMPLE_MEMBERSHIP=${SCORE_INPUT_MEMBERSHIP}.sample
+#SCORE_INPUT_CARDHOLDER=/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp/memberCard/20141008Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_cnp_left.gz
+SCORE_INPUT_CARDHOLDER=/user/jli21/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp/memberCard/20141008Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_cnp_left_diversify3_v4.gz
+SCORE_SAMPLE_CARDHOLDER=${SCORE_INPUT_CARDHOLDER}.sample
+
+pig -p ScoreInput=$SCORE_INPUT_CARDHOLDER -p ScoreSample=$SCORE_SAMPLE_CARDHOLDER -f getMemberSample.pig
+
+

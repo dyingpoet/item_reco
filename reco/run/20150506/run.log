@@ -1,0 +1,37 @@
+
+Logging initialized using configuration in file:/etc/hive/conf.bfd-puppet/hive-log4j.properties
+Total jobs = 3
+Launching Job 1 out of 3
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_201502200135_3208632, Tracking URL = http://mapr300.sv.walmartlabs.com:50030/jobdetails.jsp?jobid=job_201502200135_3208632
+Kill Command = /opt/mapr/hadoop/hadoop-0.20.2/bin/../bin/hadoop job  -kill job_201502200135_3208632
+Hadoop job information for Stage-1: number of mappers: 3; number of reducers: 0
+2015-05-07 00:17:06,050 Stage-1 map = 0%,  reduce = 0%
+2015-05-07 00:17:15,809 Stage-1 map = 33%,  reduce = 0%, Cumulative CPU 4.45 sec
+2015-05-07 00:17:30,403 Stage-1 map = 67%,  reduce = 0%, Cumulative CPU 24.79 sec
+MapReduce Total cumulative CPU time: 24 seconds 790 msec
+Ended Job = job_201502200135_3208632
+Stage-3 is selected by condition resolver.
+Stage-2 is filtered out by condition resolver.
+Stage-4 is filtered out by condition resolver.
+Moving data to: maprfs:/user/jli21/tmp/hive_2015-05-07_00-16-56_778_6363921898073170465-1/-ext-10000
+Moving data to: /user/jli21/pythia/Workspaces/CNP/reco/2015-05-05/itemInfo/dump
+MapReduce Jobs Launched:
+Job 0: Map: 3   Cumulative CPU: 41.69 sec   MAPRFS Read: 548346929 MAPRFS Write: 64285734 SUCCESS
+Total MapReduce CPU Time Spent: 41 seconds 690 msec
+OK
+Time taken: 39.027 seconds
+Item info dumping was successful.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2015-05-05/landing/clubItemLandingDir does not exist.
+Club-availability dummping was successful.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2015-05-05/landing/paidCardPreferClubLandingDir does not exist.
+Dumped the paid cards to hdfs: /user/jli21/pythia/Workspaces/CNP/reco/2015-05-05/landing/paidCardPreferClubLandingDir/.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2015-05-05/landing/allCardPreferClubLandingDir does not exist.
+Dumped all cards to hdfs: /user/jli21/pythia/Workspaces/CNP/reco/2015-05-05/landing/allCardPreferClubLandingDir/.
+Paid card club rolling succeeded!
+All card club rolling succeeded!
+Club item popularity rolling succeeded!
+Member item popularity rolling succeeded!
+Card item popularity rolling succeeded!
+Mapping from a sub-cat to the most popular item succeeded!
+The prep stage was done successfully.

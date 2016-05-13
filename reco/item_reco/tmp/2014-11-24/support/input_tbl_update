@@ -1,0 +1,4 @@
+cobought_tbl,ds,2014-12-30
+seasonality_tbl,start_of_month,2014-12-30
+item_cobought_tbl,ds,2014-12-30
+item_seasonality_tbl,start_of_month,2014-12-01

@@ -1,0 +1,12 @@
+
+Input(s):
+Successfully read 964757997 records from: "/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_member/2016-01-22/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug"
+Successfully read 1671031 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2016-01-21/itemInfo/dump"
+Successfully read 84716 records from: "/user/pythia/Workspaces/SamsMEP/mapping/systemItemNbr_catalogItemId_map/ds=2016-01-22-0510"
+
+Output(s):
+Successfully stored 20282558 records in: "/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_member/2016-01-22/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_cnp.gz"
+
+Counters:
+
+

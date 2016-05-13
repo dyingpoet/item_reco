@@ -1,0 +1,165 @@
+
+Pig=/usr/bin/pig
+
+DT=2014-10-08
+DT_ITEM_MAPPING=2014-10-06
+DT_INVENTORY=2014-10-06
+DT_OBSOLETE_DATE=2014-10-06
+DTeight=20141008Decay
+
+
+#CampaignMonth=Jun2014
+#CampaignMonthType=Jun2014-gec
+#FiaTbl=pythia.offer_assignment_fia
+#OfferAssignedMemberBaseTbl=pythia.offer_assigned_member_base
+
+Database=jli21
+ItemInfoTbl=sams_us_clubs.item_info
+InventoryHistTbl=sams_us_clubs.club_item_inventory_history
+SamsMembershipDimTbl=customers.sams_us_clubs_sams_membership_dim
+SamsCardholderDimTbl=customers.sams_us_clubs_sams_mbr_cardholder_dim
+
+ClubItemLandingDir=/user/jli21/pythia/Workspaces/CNP/reco/$DT/landing/clubItemLandingDir/
+PaidCardPreferClubLandingDir=/user/jli21/pythia/Workspaces/CNP/reco/$DT/landing/paidCardPreferClubLandingDir/
+AllCardPreferClubLandingDir=/user/jli21/pythia/Workspaces/CNP/reco/$DT/landing/allCardPreferClubLandingDir/
+
+MemberTriplePaidCard=/user/jli21/pythia/Workspaces/CNP/reco/$DT/tripleKey/paid
+MemberTripleAllCard=/user/jli21/pythia/Workspaces/CNP/reco/$DT/tripleKey/all
+
+ItemPrefClub=/user/jli21/pythia/Workspaces/CNP/reco/$DT/preference/item_club_preference
+ItemPrefMembership=/user/jli21/pythia/Workspaces/CNP/reco/$DT/preference/item_membership_preference
+ItemPrefCardholder=/user/jli21/pythia/Workspaces/CNP/reco/$DT/preference/item_cardholder_preference
+ClubSubcat2Item=/user/jli21/pythia/Workspaces/CNP/reco/$DT/preference/clubSubcat2Item
+
+ItemInfoSnapshot=/user/pythia/Workspaces/SamsMEP/item_info_snapshot/ds=${DT_ITEM_MAPPING}/
+
+#ItemInfoSnapshot=/user/pythia/Workspaces/SamsMEP/MNScoring/Aug2014/init/2014-06-26/sams_item_subcat_mapping/snapshot_2014-06-23.txt
+TransOffline="/user/pythia/Workspaces/SamsMEP/customer_club_day_item_sales_with_sub_category_v2"
+TransOnline=/user/pythia/Workspaces/SamsMEP/sams_online_dump
+
+ItemInfoDump=/user/jli21/pythia/Workspaces/CNP/reco/$DT/itemInfo/dump
+
+#DailyIndexLoc=/user/pythia/Workspaces/SamsMEP/adhoc_queries/click_n_pull/global_level_week_factor_store_trans/process_date=2014-07-25
+#DailyIndexLoc=/user/jli21/pythia/Workspaces/CNP/reco/$DT/seasonality/daily/weekly_seasonality
+DailyIndexLoc=/user/jli21/pythia/Workspaces/CNP/reco/2014-10-07/seasonality/daily/weekly_seasonality/00000
+#hadoop fs -cat /user/pythia/Workspaces/SamsMEP/adhoc_queries/click_n_pull/global_level_week_factor_store_trans/process_date=2014-10-07/* | bzcat > weekly_seasonality_2014-10-07
+#hadoop fs -put weekly_seasonality_2014-10-07 /user/jli21/pythia/Workspaces/CNP/reco/2014-10-07/seasonality/daily/weekly_seasonality/00000
+
+### system_item_nbr \t productId
+ProdIdMap=/user/pythia/Workspaces/SamsMEP/mapping/systemItemNbr_catalogItemId_map/ds=2014-10-09-0531
+
+
+DataStartT=2013-10-07
+DataEndT=2014-10-06
+DateLB=2012-01-01
+DateUB=2014-10-06
+
+
+### dump item_info
+#hadoop fs -rmr $ItemInfoDump
+#hadoop fs -mkdir $ItemInfoDump
+#hive -e "SET hive.exec.compress.output=false;
+#            SET mapred.output.compression.codec=org.apache.hadoop.io.compress.BZip2Codec;
+#            set hive.exec.dynamic.partition=true;
+#            set hive.exec.dynamic.partition.mode=nonstrict;
+#            set hive.exec.parallel=true;
+#            insert overwrite directory '${ItemInfoDump}' select system_item_nbr,category_nbr,mdse_subcatg_nbr,customer_item_nbr,consumer_item_desc,product_desc from sams_us_clubs.item_info;"
+
+
+### dump club_avail <item,club>
+##hive -hiveconf club_item_landing_dir=$ClubItemLandingDir \
+##    -hiveconf ds=$DT_INVENTORY \
+##    -hiveconf Database=$Database \
+##    -hiveconf club_item_inventory_history_table=$InventoryHistTbl \
+##    -hiveconf sams_membership_dim_table=$SamsMembershipDimTbl \
+##    -hiveconf sams_cardholder_dim_table=$SamsCardholderDimTbl \
+##    -hiveconf ds_obsolete_date_lb=$DT_OBSOLETE_DATE \
+##    -hiveconf item_info=$ItemInfoTbl \
+##    -f club_avail.hql
+
+
+
+### dump card's preferred club
+# 1. paid card
+# hive -f member_pcard_fetch.hql -hiveconf sams_membership_dim_table=$SamsMembershipDimTbl -hiveconf sams_cardholder_dim_table=$SamsCardholderDimTbl -hiveconf Database=$Database -hiveconf paid_card_landing_dir=$PaidCardPreferClubLandingDir -hiveconf ds_obsolete_date_lb=$DT_OBSOLETE_DATE
+# 2. all cards
+#hive -f member_all_card_fetch.hql -hiveconf sams_membership_dim_table=$SamsMembershipDimTbl -hiveconf sams_cardholder_dim_table=$SamsCardholderDimTbl -hiveconf Database=$Database -hiveconf all_card_landing_dir=$AllCardPreferClubLandingDir -hiveconf ds_obsolete_date_lb=$DT_OBSOLETE_DATE
+
+
+
+### generate triple golden key + club
+# 1. paid card
+#$Pig -p memberCardsLoc=$PaidCardPreferClubLandingDir -p memberCardUniq=$MemberTriplePaidCard -f uniq_card_flt.pig 
+##pig -p tripleKey=/user/jli21/pythia/Workspaces/CNP/reco/$DT/tripleKey/paid -f uniq_card_flt_profile.pig 
+# 2. all cards
+#$Pig -p memberCardsLoc=$AllCardPreferClubLandingDir -p memberCardUniq=$MemberTripleAllCard -f uniq_all_card_flt.pig 
+
+
+
+### generate member pool
+
+
+
+### item club popularity
+#$Pig -p TransOnline=$TransOnline \
+#    -p TransOffline=$TransOffline \
+#    -p ItemSubCatMapping=$ItemInfoSnapshot \
+#    -p OutputGlobalPref=$ItemPrefClub \
+#    -p DataStartT=$DataStartT \
+#    -p DataEndT=$DataEndT \
+#    -p TaskDir=. \
+#    -f club_item_popularity.pig
+
+
+
+### item member popularity
+#$Pig -p MemCombined=$MemberTriplePaidCard     -p TransOnline=$TransOnline \
+#    -p TransOffline=$TransOffline \
+#    -p ItemSubCatMapping=$ItemInfoSnapshot \
+#    -p OutputMemberPref=$ItemPrefMembership \
+#    -p DateLB=$DateLB \
+#    -p DateUB=$DateUB \
+#    -f item_preference_membership.pig
+
+#$Pig -p MemCombined=$MemberTripleAllCard     -p TransOnline=$TransOnline \
+#    -p TransOffline=$TransOffline \
+#    -p ItemSubCatMapping=$ItemInfoSnapshot \
+#    -p OutputMemberPref=$ItemPrefCardholder \
+#    -p DateLB=$DateLB \
+#    -p DateUB=$DateUB \
+#    -f item_preference_cardholder.pig
+
+
+
+### sc2item preference, generate <club,subcat,item>
+#$Pig -p clubAvail=$ClubItemLandingDir -p itemClubPopularity=$ItemPrefClub -p popularSubcat2Item=$ClubSubcat2Item -f sc2item.pig 
+
+
+
+### transAgg, scoring, remind, scaling
+
+
+
+#type="cnp/member"
+type="cnp/memberCard"
+COB_TYPE=cosine
+#RecoScore=/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/$type/$DTeight/recommend_score_cobought_no_smoothing_max_${COB_TYPE}_cobought_transaction_debug
+RecoScore=/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/$type/$DTeight/recommend_score_cobought_no_smoothing_max_raw_cobought_transaction_debug
+#/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp/memberCard/20141008Decay/recommend_score_cobought_no_smoothing_max_raw_cobought_transaction_debug_adj_study_scaled
+RecoRemind=${RecoScore}"_adj"
+RecoStudy=${RecoRemind}"_study"
+RecoStudyMax=${RecoRemind}"_study_max"
+RecoStudyScaled=${RecoRemind}"_study_scaled"
+#RecoCNP=${RecoScore}"_cnp.gz"
+#RecoCNP=/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/$type/$DTeight/recommend_score_cobought_no_smoothing_max_${COB_TYPE}_cobought_transaction_debug_cnp.gz
+RecoCNP=/user/jli21/pythia/Workspaces/SamsMEP/Recommend/Scoring/$type/$DTeight/recommend_score_cobought_no_smoothing_max_${COB_TYPE}_cobought_transaction_debug_cnp_left_diversify3_v4.gz
+#/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp/member/20140715Decay/recommend_score_cobought_no_smoothing_max_raw_cobought_transaction_debug_cnp.gz
+
+### subcat -> item assignment
+### json dump; select top 30 item reco per member
+##$Pig -p reco=$RecoStudyScaled  -p cardClub=$MemberTriplePaidCard  -p clubSubcatItem=$ClubSubcat2Item -p itemInfo=$ItemInfoDump -p dailyIndex=$DailyIndexLoc -p TaskDir=. -p OUTPUT=$RecoCNP  -f assign_item.pig
+#$Pig -p reco=$RecoStudyScaled  -p cardClub=$MemberTripleAllCard  -p clubSubcatItem=$ClubSubcat2Item -p itemInfo=$ItemInfoDump -p dailyIndex=$DailyIndexLoc -p TaskDir=. -p OUTPUT=$RecoCNP  -f assign_item_card.pig
+
+
+##$Pig -p reco=$RecoStudyScaled  -p cardClub=$MemberTriplePaidCard  -p clubSubcatItem=$ClubSubcat2Item -p itemInfo=$ItemInfoDump -p dailyIndex=$DailyIndexLoc -p TaskDir=. -p OUTPUT=$RecoCNP  -p prodIdMap=$ProdIdMap -f assign_item_w_prodId.pig
+$Pig -p reco=$RecoStudyScaled  -p cardClub=$MemberTripleAllCard  -p clubSubcatItem=$ClubSubcat2Item -p itemInfo=$ItemInfoDump -p dailyIndex=$DailyIndexLoc -p TaskDir=. -p OUTPUT=$RecoCNP  -p prodIdMap=$ProdIdMap -f assign_item_card_w_prodId.pig 1>assign_item_card_w_prodId_${DT}.log 2>&1

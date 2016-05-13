@@ -1,0 +1,52 @@
+2015-04-01 13:50:43,796 Stage-1 map = 100%,  reduce = 33%, Cumulative CPU 72.58 sec
+MapReduce Total cumulative CPU time: 1 minutes 12 seconds 580 msec
+Ended Job = job_201502200135_1494385
+MapReduce Jobs Launched:
+Job 0: Map: 3  Reduce: 1   Cumulative CPU: 72.58 sec   MAPRFS Read: 626156126 MAPRFS Write: 92359530 SUCCESS
+Total MapReduce CPU Time Spent: 1 minutes 12 seconds 580 msec
+OK
+Time taken: 162.331 seconds
+The cobought score was already there. No action needed.
+Number of RECO subcat: 2574
+The seasonality table was already there. No action needed.
+The weekly table was already there. No action needed.
+start the prep stage!
+rmr: cannot remove /user/jli21/pythia/Workspaces/CNP/reco/2015-03-31/itemInfo/dump: No such file or directory.
+Logging initialized using configuration in file:/etc/hive/conf.bfd-puppet/hive-log4j.properties
+Hive history file=/data1/hive/jli21/hive_job_log_jli21_201504011351_1569940657.txt
+Total MapReduce jobs = 2
+Launching Job 1 out of 2
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_201502200135_1494456, Tracking URL = http://mapr300.sv.walmartlabs.com:50030/jobdetails.jsp?jobid=job_201502200135_1494456
+Kill Command = /opt/mapr/hadoop/hadoop-0.20.2/bin/../bin/hadoop job  -Dmapred.job.tracker=maprfs:/// -kill job_201502200135_1494456
+Hadoop job information for Stage-1: number of mappers: 3; number of reducers: 0
+2015-04-01 13:52:13,998 Stage-1 map = 33%,  reduce = 0%, Cumulative CPU 5.15 sec
+2015-04-01 13:52:30,390 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 48.55 sec
+MapReduce Total cumulative CPU time: 48 seconds 550 msec
+Ended Job = job_201502200135_1494456
+Ended Job = 135991721, job is filtered out (removed at runtime).
+Moving data to: maprfs:/user/jli21/tmp/hive_2015-04-01_13-51-24_510_5464907178624675047/-ext-10000
+Moving data to: /user/jli21/pythia/Workspaces/CNP/reco/2015-03-31/itemInfo/dump
+1589531 Rows loaded to /user/jli21/pythia/Workspaces/CNP/reco/2015-03-31/itemInfo/dump
+MapReduce Jobs Launched:
+Job 0: Map: 3   Cumulative CPU: 48.55 sec   MAPRFS Read: 543500436 MAPRFS Write: 63635364 SUCCESS
+Total MapReduce CPU Time Spent: 48 seconds 550 msec
+OK
+Time taken: 77.337 seconds
+Item info dumping was successful.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2015-03-31/landing/clubItemLandingDir does not exist.
+Club-availability dummping was successful.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2015-03-31/landing/paidCardPreferClubLandingDir does not exist.
+Dumped the paid cards to hdfs: /user/jli21/pythia/Workspaces/CNP/reco/2015-03-31/landing/paidCardPreferClubLandingDir/.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2015-03-31/landing/allCardPreferClubLandingDir does not exist.
+Dumped all cards to hdfs: /user/jli21/pythia/Workspaces/CNP/reco/2015-03-31/landing/allCardPreferClubLandingDir/.
+Paid card club rolling succeeded!
+All card club rolling succeeded!
+Club item popularity rolling succeeded!
+Member item popularity rolling succeeded!
+Card item popularity rolling succeeded!
+Mapping from a sub-cat to the most popular item succeeded!
+The prep stage was done successfully.
+
+
+

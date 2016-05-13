@@ -1,0 +1,16 @@
+FAILED: ParseException line 3:16 cannot recognize input near 'SELECT' '*' 'FROM' in create table statement
+
+
+Weekly=/user/jli21/data/seasonality/weekly/2015-11-17
+pythia.item_specific_seasonality_data_month
+pythia.item_level_cobought_cosine_scores_yearly
+hive -hiveconf seasonality_tbl=pythia.item_specific_seasonality_data_month -hiveconf cobought_dt=2015-12-01 -hiveconf cobought_tbl=pythia.item_level_cobought_cosine_scores_yearly -hiveconf seasonality_month=2015-11-01 -hiveconf member_type=all -hiveconf trans_tbl=pythia.pis_member_item_trans_score_partition -hiveconf trans_partition=2015-12-03
+
+
+hive> SELECT system_item_nbr, partition_system_item_nbr, score FROM pythia.item_level_cobought_cosine_scores_yearly WHERE ds='2015-12-01' AND membership_type_code='all' AND region_nbr='all' limit 3;    
+10001	21941896	0.00399968003839488
+10001	5630423	0.0038984058779272523
+10001	7208403	0.00287162293204301
+Time taken: 14.031 seconds, Fetched: 3 row(s)
+
+

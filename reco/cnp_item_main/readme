@@ -1,0 +1,63 @@
+bash main_scoring_parallel_driver
+
+bash main_scoring_parallel_driver
+
+bash membership_scoring_driver ./reco_membership_param.cfg
+
+grep membership_scoring_driver *
+main_scoring_thread_membership:source $1/membership_scoring_driver
+
+
+$ cat main_scoring_thread_membership
+#! /bin/bash
+
+
+###### membership scoring
+source $1/membership_scoring_driver
+
+### generating the json format
+if [[ $? != 0 ]]; then echo "The membership scoring failed! Exit!"; exit 1; fi
+if [[ ! -e ${TOUCH_MEMBERSHIP_OUTPUT} ]]; then
+    $Pig -p reco=$RecoStudyScaled  -p cardClub=$MemberTriplePaidCard  -p clubSubcatItem=$ClubSubcat2Item -p itemInfo=$ItemInfoDump -p dailyIndex=$DailyIndexLoc -p TaskDir=${SRC_OUTPUT_DIR} -p OUTPUT=$RecoCNP  -p prodIdMap=$ProdIdMap -f ${SRC_OUTPUT_DIR}/assign_item_w_prodId.pig 1>${LOG_OUTPUT_DIR}/assign_item_w_prodId.${DT}.log 2>&1
+    if [[ $? -ne 0 ]]; then echo "Membership json generation failed!"; exit 21; else echo "Membership json generation succeeded!"; touch ${TOUCH_MEMBERSHIP_OUTPUT}; fi
+else
+    echo "Membership json generation was successfully run before!" 
+fi
+
+
+
+
+$ cat main_scoring_parallel_driver
+#! /bin/bash
+
+export PIG_HEAPSIZE=2096
+
+MAIN_SCRIPT_PATH=/home/jli21/project/reco/src/production/cnp_item_main
+
+source ./reco_membership_param.cfg
+
+source ${MAIN_SCRIPT_PATH}/support_driver
+if [[ $? != 0 ]]; then echo "The support module failed."; exit 1; fi
+
+source ${MAIN_SCRIPT_PATH}/prep_driver
+if [[ $? != 0 ]]; then echo "The prep module failed."; exit 1; fi
+
+###### membership scoring
+bash ${MAIN_SCRIPT_PATH}/main_scoring_thread_membership 1>${LOG_DIR}/main_scoring_thread_membership.log 2>&1 &
+
+###### cardholder scoring
+#source ./reco_cardholder_param.cfg
+#bash ${MAIN_SCRIPT_PATH}/main_scoring_thread_cardholder 1>${LOG_DIR}/main_scoring_thread_cardholder.log 2>&1 &
+
+
+
+
+jli21@offers-cnp00 ~/project/reco/src/production/cnp_item_main $ ls -rlth ../item_reco/
+total 0
+drwxrwxr-x 2 jli21 jli21  50 Jun 12 15:28 config
+drwxrwxr-x 3 jli21 jli21  23 Jun 12 15:29 log
+drwxrwxr-x 2 jli21 jli21 111 Jun 12 15:29 main
+drwxrwxr-x 3 jli21 jli21  23 Jun 12 15:29 tmp
+drwxrwxr-x 8 jli21 jli21  76 Jun 16 11:02 src
+
+

@@ -1,0 +1,32 @@
+Time taken: 44.927 seconds
+Item info dumping was successful.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2015-11-03/landing/clubItemLandingDir does not exist.
+Club-availability dummping was successful.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2015-11-03/landing/paidCardPreferClubLandingDir does not exist.
+Dumped the paid cards to hdfs: /user/jli21/pythia/Workspaces/CNP/reco/2015-11-03/landing/paidCardPreferClubLandingDir/.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2015-11-03/landing/allCardPreferClubLandingDir does not exist.
+Dumped all cards to hdfs: /user/jli21/pythia/Workspaces/CNP/reco/2015-11-03/landing/allCardPreferClubLandingDir/.
+Paid card club rolling succeeded!
+All card club rolling succeeded!
+Club item popularity rolling succeeded!
+Member item popularity rolling succeeded!
+Card item popularity rolling succeeded!
+Mapping from a sub-cat to the most popular item succeeded!
+The prep stage was done successfully.
+You have new mail in /var/spool/mail/jli21
+
+
+
+
+Input(s):
+Successfully read 21136095 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2015-11-03/tripleKey/paid"
+Successfully read 43322423793 records from: "/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_member/2015-11-04/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_adj_study_scaled"
+Successfully read 890796 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2015-11-03/preference/clubSubcat2Item"
+Successfully read 1653839 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2015-11-03/itemInfo/dump"
+Successfully read 62018 records from: "/user/pythia/Workspaces/SamsMEP/mapping/systemItemNbr_catalogItemId_map/ds=2014-11-16-0600"
+
+Output(s):
+Successfully stored 20232339 records in: "/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_member/2015-11-04/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_cnp.gz"
+
+
+

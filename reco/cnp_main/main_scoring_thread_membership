@@ -1,0 +1,26 @@
+#! /bin/bash
+
+
+###### membership scoring
+source $1/membership_scoring_driver
+
+### generating the json format
+if [[ $? != 0 ]]; then echo "The membership scoring failed! Exit!"; exit 1; fi
+if [[ ! -e ${TOUCH_MEMBERSHIP_OUTPUT} ]]; then
+    $Pig -p reco=$RecoStudyScaled  -p cardClub=$MemberTriplePaidCard  -p clubSubcatItem=$ClubSubcat2Item -p itemInfo=$ItemInfoDump -p dailyIndex=$DailyIndexLoc -p TaskDir=${SRC_OUTPUT_DIR} -p OUTPUT=$RecoCNP  -p prodIdMap=$ProdIdMap -f ${SRC_OUTPUT_DIR}/assign_item_w_prodId.pig 1>${LOG_OUTPUT_DIR}/assign_item_w_prodId.${DT}.log 2>&1
+    if [[ $? -ne 0 ]]; then echo "Membership json generation failed!"; exit 21; else echo "Membership json generation succeeded!"; touch ${TOUCH_MEMBERSHIP_OUTPUT}; fi
+else
+    echo "Membership json generation was successfully run before!" 
+fi
+
+### WMX output
+if [[ ! -e ${TOUCH_WMX_OUTPUT} ]]; then
+    $Pig -p reco=$RecoStudyScaled -p activeMember=$MemberTripleActiveCard -p recoWMX=$RecoWMX -f ${SRC_OUTPUT_DIR}/wmx_output.pig 1>${LOG_OUTPUT_DIR}/wmx_output.${DT}.log 2>&1
+    if [[ $? -ne 0 ]]; then echo "WMX generation failed!"; exit 22; else echo "WMX generation succeeded!"; touch ${TOUCH_WMX_OUTPUT}; fi
+else
+    echo "WMX generation was successfully run before!" 
+    #hadoop fs -rmr $RecoStudyScaled
+fi
+
+
+

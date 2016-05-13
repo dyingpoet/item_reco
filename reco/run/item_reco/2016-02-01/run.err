@@ -1,0 +1,11 @@
+
+Logging initialized using configuration in file:/etc/hive/conf.bfd-puppet/hive-log4j.properties
+OK
+Time taken: 0.714 seconds, Fetched: 1000 row(s)
+Weekly=/user/jli21/data/seasonality/weekly/2015-12-15
+2016-01-12 14:25:43,6788 ERROR Cidcache fs/client/fileclient/cc/cidcache.cc:1283 Thread: 15009 Lookup of volume user.pythia failed, error Connection reset by peer(104), CLDB: 10.93.131.130:7222 backing off ...
+pythia.item_specific_seasonality_data_month
+pythia.item_level_cobought_cosine_scores_yearly
+
+
+

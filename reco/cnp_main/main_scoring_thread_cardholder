@@ -1,0 +1,33 @@
+#! /bin/bash
+
+
+###### cardholder scoring
+source $1/cardholder_scoring_driver
+
+### generating the json format
+if [[ $? != 0 ]]; then echo "The cardholder scoring failed! Exit!"; exit 1; fi
+if [[ ! -e ${TOUCH_CARDHOLDER_OUTPUT} ]]; then
+    $Pig -p reco=$RecoStudyScaled  -p cardClub=$MemberTripleAllCard  -p clubSubcatItem=$ClubSubcat2Item -p itemInfo=$ItemInfoDump -p dailyIndex=$DailyIndexLoc -p TaskDir=${SRC_OUTPUT_DIR} -p OUTPUT=$RecoCNP  -p prodIdMap=$ProdIdMap -f ${SRC_OUTPUT_DIR}/assign_item_card_w_prodId.pig 1>${LOG_OUTPUT_DIR}/assign_item_card_w_prodId.${DT}.log 2>&1
+    if [[ $? -ne 0 ]]; then echo "Cardholder json generation failed!"; exit 23; else echo "Cardholder json generation succeeded!"; touch ${TOUCH_CARDHOLDER_OUTPUT}; fi
+    #hadoop fs -rmr $RecoStudyScaled
+    echo "The CNP cardholder recommendation scoring pipeline done at `date +'%Y-%m-%d %T'`."  
+    #exit 0; 
+else
+    echo "Cardholder json generation was successfully run before!" 
+fi
+
+### ISB output
+# if [[ $? != 0 ]]; then echo "The cardholder scoring failed! Exit!"; exit 1; fi
+# if [[ ! -e ${TOUCH_ISB_CARDHOLDER_OUTPUT} ]]; then
+#     $Pig -p reco=$RecoStudyScaled  -p cardClub=$MemberTripleAllCard  -p clubAvail=$ClubItemLandingDir -p itemClubPopularity=$ItemPrefClub -p TaskDir=${SRC_OUTPUT_DIR} -p OUTPUT=$RecoISB  -f ${SRC_OUTPUT_DIR}/reco_isb_cardholder_output.pig 1>${LOG_OUTPUT_DIR}/reco_isb_cardholder_output.${DT}.log 2>&1
+#     if [[ $? -ne 0 ]]; then echo "Cardholder ISB RECO generation failed!"; exit 23; else echo "Cardholder ISB RECO generation succeeded!"; touch ${TOUCH_ISB_CARDHOLDER_OUTPUT}; fi
+#     #hadoop fs -rmr $RecoStudyScaled
+#     echo "The ISB recommendation scoring is done at `date +'%Y-%m-%d %T'`."  
+#     exit 0; 
+# else
+#     echo "Cardholder ISB RECO generation was successfully run before!" 
+# fi
+
+
+
+

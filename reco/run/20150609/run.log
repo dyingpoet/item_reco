@@ -1,0 +1,31 @@
+Success!
+
+Job Stats (time in seconds):
+JobId   Maps    Reduces MaxMapTime      MinMapTIme      AvgMapTime      MedianMapTime   MaxReduceTime   MinReduceTime   AvgReduceTime   MedianReducetime        Alias   Feature Outputs
+job_201505111628_1467938        1       0       14      14      14      14      0       0       0       0       prodIdMap       MAP_ONLY        
+job_201505111628_1467941        9500    1000    1960    82      167     157     4597    380     1593    1799    reco,recoRaw,recoRawGrp,recoRawLimit,recoRawOrder       GROUP_BY        
+job_201505111628_1471562        2       1000    n/a     n/a     n/a     n/a     n/a     n/a     cardClub,recoClub,recoClubJoin  HASH_JOIN       
+job_201505111628_1471935        2       1000    n/a     n/a     n/a     n/a     n/a     n/a     recoItem,recoItemJoin,sc2item   HASH_JOIN       
+job_201505111628_1473188        987     1000    329     22      75      71      658     10      217     227     itemInfo,recoItemAttach0,recoItemJoinInfo       HASH_JOIN       
+job_201505111628_1473737        932     1000    626     63      158     141     1072    164     461     528     recoItemAttach,recoItemAttach0Grp,recoItemAttach0Limit,recoItemAttach0Order,recoItemWeekly,recoItemWeekly0,recoItemWeekly0Join  REPLICATED_JOIN,GROUP_BY,STREAMING      
+job_201505111628_1474513        1000    400     544     69      168     113     597     271     338     336     recoGrp,recoItems,recoLimit,recoTop     GROUP_BY        
+job_201505111628_1475220        400     400     866     87      130     127     928     786     851     847     cardholders,recoMemGrp,recoOut  GROUP_BY        /user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_memberCard/2015-06-09/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_cnp.gz,
+
+Input(s):
+Successfully read 49467866301 records from: "/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_memberCard/2015-06-09/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_adj_study_scaled"
+Successfully read 105965805 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2015-06-08/tripleKey/all"
+Successfully read 874347 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2015-06-08/preference/clubSubcat2Item"
+Successfully read 1611446 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2015-06-08/itemInfo/dump"
+Successfully read 62018 records from: "/user/pythia/Workspaces/SamsMEP/mapping/systemItemNbr_catalogItemId_map/ds=2014-11-16-0600"
+
+Output(s):
+Successfully stored 20279762 records in: "/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_memberCard/2015-06-09/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_cnp.gz"
+
+Counters:
+Total records written : 20279762
+Total bytes written : 0
+Spillable Memory Manager spill count : 0
+Total bags proactively spilled: 249
+Total records proactively spilled: 1337974644
+
+

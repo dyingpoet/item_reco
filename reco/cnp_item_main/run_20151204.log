@@ -1,0 +1,45 @@
+The weekly table was already there. No action needed.
+start the prep stage!
+rmr: cannot remove /user/jli21/pythia/Workspaces/CNP/reco/2015-12-02/itemInfo/dump: No such file or directory.
+Attached to the *bfd-main* Hadoop cluster
+
+This cluster will likely experience job backlogs on the weekend
+after Black Friday. If you have an automated system that runs
+important time-sensitive jobs, please make sure that they run on
+the cdc-main cluster as well.
+
+Logging initialized using configuration in file:/etc/hive/conf.bfd-puppet/hive-log4j.properties
+Total jobs = 3
+Launching Job 1 out of 3
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_201512021745_96398, Tracking URL = http://sv1-hp0302-01.sv.walmartlabs.com:50030/jobdetails.jsp?jobid=job_201512021745_96398
+Kill Command = /opt/mapr/hadoop/hadoop-0.20.2/bin/../bin/hadoop job  -kill job_201512021745_96398
+Hadoop job information for Stage-1: number of mappers: 3; number of reducers: 0
+2015-12-04 11:55:10,004 Stage-1 map = 0%,  reduce = 0%
+2015-12-04 11:55:29,819 Stage-1 map = 33%,  reduce = 0%, Cumulative CPU 5.54 sec
+2015-12-04 11:55:43,635 Stage-1 map = 67%,  reduce = 0%, Cumulative CPU 39.86 sec
+MapReduce Total cumulative CPU time: 39 seconds 860 msec
+Ended Job = job_201512021745_96398
+Stage-3 is selected by condition resolver.
+Stage-2 is filtered out by condition resolver.
+Stage-4 is filtered out by condition resolver.
+Moving data to: maprfs:/user/jli21/tmp/hive_2015-12-04_11-55-05_420_4075499814006723471-1/-ext-10000
+Moving data to: /user/jli21/pythia/Workspaces/CNP/reco/2015-12-02/itemInfo/dump
+MapReduce Jobs Launched:
+Job 0: Map: 3   Cumulative CPU: 39.86 sec   MAPRFS Read: 574649321 MAPRFS Write: 67478286 SUCCESS
+Total MapReduce CPU Time Spent: 39 seconds 860 msec
+OK
+Time taken: 43.029 seconds
+Item info dumping was successful.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2015-12-02/landing/clubItemLandingDir does not exist.
+Club-availability dummping was successful.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2015-12-02/landing/paidCardPreferClubLandingDir does not exist.
+Dumped the paid cards to hdfs: /user/jli21/pythia/Workspaces/CNP/reco/2015-12-02/landing/paidCardPreferClubLandingDir/.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2015-12-02/landing/allCardPreferClubLandingDir does not exist.
+Dumped all cards to hdfs: /user/jli21/pythia/Workspaces/CNP/reco/2015-12-02/landing/allCardPreferClubLandingDir/.
+Paid card club rolling succeeded!
+All card club rolling succeeded!
+The prep stage was done successfully.
+You have new mail in /var/spool/mail/jli21
+
+

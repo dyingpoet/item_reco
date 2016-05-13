@@ -1,0 +1,140 @@
+
+Database=jli21
+ItemInfoTbl=sams_us_clubs.item_info
+InventoryHistTbl=sams_us_clubs.club_item_inventory_history
+SamsMembershipDimTbl=customers.sams_us_clubs_sams_membership_dim
+SamsCardholderDimTbl=customers.sams_us_clubs_sams_mbr_cardholder_dim
+
+ClubItemLandingDir=/user/jli21/pythia/Workspaces/CNP/reco/$DT/landing/clubItemLandingDir/
+PaidCardPreferClubLandingDir=/user/jli21/pythia/Workspaces/CNP/reco/$DT/landing/paidCardPreferClubLandingDir/
+AllCardPreferClubLandingDir=/user/jli21/pythia/Workspaces/CNP/reco/$DT/landing/allCardPreferClubLandingDir/
+
+MemberTriplePaidCard=/user/jli21/pythia/Workspaces/CNP/reco/$DT/tripleKey/paid
+MemberTripleAllCard=/user/jli21/pythia/Workspaces/CNP/reco/$DT/tripleKey/all
+
+ItemPrefClub=/user/jli21/pythia/Workspaces/CNP/reco/$DT/preference/item_club_preference
+ItemPrefMembership=/user/jli21/pythia/Workspaces/CNP/reco/$DT/preference/item_membership_preference
+ItemPrefCardholder=/user/jli21/pythia/Workspaces/CNP/reco/$DT/preference/item_cardholder_preference
+ClubSubcat2Item=/user/jli21/pythia/Workspaces/CNP/reco/$DT/preference/clubSubcat2Item
+
+TransOffline=/user/pythia/Workspaces/SamsMEP/customer_club_day_item_sales_with_sub_category_v2
+TransOnline=/user/pythia/Workspaces/SamsMEP/sams_online_dump
+
+ItemInfoDump=/user/jli21/pythia/Workspaces/CNP/reco/$DT/itemInfo/dump
+
+
+
+DailyIndexLoc=/user/jli21/pythia/Workspaces/CNP/reco/2014-10-07/seasonality/daily/weekly_seasonality/00000
+
+### system_item_nbr \t productId
+ProdIdMap=/user/pythia/Workspaces/SamsMEP/mapping/systemItemNbr_catalogItemId_map/ds=2014-10-09-0531
+
+DataStartT=2013-10-07
+DataEndT=2014-10-06
+
+DateLB=2013-09-07
+DateUB=2014-10-06
+SPLB="2012-11-01"
+SPUB="2012-11-30"
+SplitDate="2013-10-07"
+
+### dump item_info
+#hadoop fs -rmr $ItemInfoDump
+#hadoop fs -mkdir $ItemInfoDump
+#hive -e "SET hive.exec.compress.output=false;
+#            SET mapred.output.compression.codec=org.apache.hadoop.io.compress.BZip2Codec;
+#            set hive.exec.dynamic.partition=true;
+#            set hive.exec.dynamic.partition.mode=nonstrict;
+#            set hive.exec.parallel=true;
+#            insert overwrite directory '${ItemInfoDump}' select system_item_nbr,category_nbr,mdse_subcatg_nbr,customer_item_nbr,consumer_item_desc,product_desc from sams_us_clubs.item_info;"
+
+if ! hadoop fs -test -d ${ClubItemLandingDir}; then
+    hadoop fs -mkdir ${ClubItemLandingDir}
+fi
+
+if ! hadoop fs -test -d ${PaidCardPreferClubLandingDir}; then
+    hadoop fs -mkdir ${PaidCardPreferClubLandingDir}
+fi
+
+if ! hadoop fs -test -d ${AllCardPreferClubLandingDir}; then
+    hadoop fs -mkdir ${AllCardPreferClubLandingDir}
+fi
+
+### dump club_avail <item,club>
+#hive -hiveconf club_item_landing_dir=$ClubItemLandingDir \
+#    -hiveconf ds=$DT_INVENTORY \
+#    -hiveconf Database=$Database \
+#    -hiveconf club_item_inventory_history_table=$InventoryHistTbl \
+#    -hiveconf sams_membership_dim_table=$SamsMembershipDimTbl \
+#    -hiveconf sams_cardholder_dim_table=$SamsCardholderDimTbl \
+#    -hiveconf ds_obsolete_date_lb=$DT_OBSOLETE_DATE \
+#    -hiveconf item_info=$ItemInfoTbl \
+#    -f club_avail.hql
+
+
+
+### dump card's preferred club
+# 1. paid card
+#hive -f member_pcard_fetch.hql -hiveconf sams_membership_dim_table=$SamsMembershipDimTbl -hiveconf sams_cardholder_dim_table=$SamsCardholderDimTbl -hiveconf Database=$Database -hiveconf paid_card_landing_dir=$PaidCardPreferClubLandingDir -hiveconf ds_obsolete_date_lb=$DT_OBSOLETE_DATE
+# 2. all cards
+#hive -f member_all_card_fetch.hql -hiveconf sams_membership_dim_table=$SamsMembershipDimTbl -hiveconf sams_cardholder_dim_table=$SamsCardholderDimTbl -hiveconf Database=$Database -hiveconf all_card_landing_dir=$AllCardPreferClubLandingDir -hiveconf ds_obsolete_date_lb=$DT_OBSOLETE_DATE
+
+
+
+### generate triple golden key + club
+# 1. paid card
+#$Pig -p memberCardsLoc=$PaidCardPreferClubLandingDir -p memberCardUniq=$MemberTriplePaidCard -f uniq_card_flt.pig 
+##pig -p tripleKey=/user/jli21/pythia/Workspaces/CNP/reco/$DT/tripleKey/paid -f uniq_card_flt_profile.pig 
+# 2. all cards
+#$Pig -p memberCardsLoc=$AllCardPreferClubLandingDir -p memberCardUniq=$MemberTripleAllCard -f uniq_all_card_flt.pig 
+
+
+
+### generate member pool
+
+
+
+### item club popularity
+#$Pig -p TransOnline=$TransOnline \
+#    -p TransOffline=$TransOffline \
+#    -p ItemSubCatMapping=$ItemInfoSnapshot \
+#    -p OutputGlobalPref=$ItemPrefClub \
+#    -p DataStartT=$DataStartT \
+#    -p DataEndT=$DataEndT \
+#    -p TaskDir=. \
+#    -f club_item_popularity.pig
+
+
+
+### item member popularity; failed on 2014-10-08
+#$Pig -p MemCombined=$MemberTriplePaidCard     -p TransOnline=$TransOnline \
+#    -p TransOffline=$TransOffline \
+#    -p ItemSubCatMapping=$ItemInfoSnapshot \
+#    -p DateLB=${DateLB} \
+#    -p DateUB=${DateUB} \
+#    -p SPLB=${SPLB} \
+#    -p SPUB=${SPUB} \
+#    -p SplitDate=${SplitDate} \
+#    -p OutputMemberPref=$ItemPrefMembership \
+#    -f item_preference_membership.pig
+
+#$Pig -p MemCombined=$MemberTripleAllCard     -p TransOnline=$TransOnline \
+#    -p TransOffline=$TransOffline \
+#    -p ItemSubCatMapping=$ItemInfoSnapshot \
+#    -p DateLB=${DateLB} \
+#    -p DateUB=${DateUB} \
+#    -p SPLB=${SPLB} \
+#    -p SPUB=${SPUB} \
+#    -p SplitDate=${SplitDate} \
+#    -p OutputMemberPref=$ItemPrefCardholder \
+#    -f item_preference_cardholder.pig
+
+
+
+### sc2item preference, generate <club,subcat,item>
+#$Pig -p clubAvail=$ClubItemLandingDir -p itemClubPopularity=$ItemPrefClub -p popularSubcat2Item=$ClubSubcat2Item -f sc2item.pig 
+
+
+
+
+

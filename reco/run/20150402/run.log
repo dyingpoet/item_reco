@@ -1,0 +1,62 @@
+Time taken: 55.252 seconds
+Item info dumping was successful.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2015-04-01/landing/clubItemLandingDir does not exist.
+Club-availability dummping was successful.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2015-04-01/landing/paidCardPreferClubLandingDir does not exist.
+Dumped the paid cards to hdfs: /user/jli21/pythia/Workspaces/CNP/reco/2015-04-01/landing/paidCardPreferClubLandingDir/.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2015-04-01/landing/allCardPreferClubLandingDir does not exist.
+Dumped all cards to hdfs: /user/jli21/pythia/Workspaces/CNP/reco/2015-04-01/landing/allCardPreferClubLandingDir/.
+Paid card club rolling succeeded!
+All card club rolling succeeded!
+Club item popularity rolling succeeded!
+Member item popularity rolling succeeded!
+Card item popularity rolling succeeded!
+Mapping from a sub-cat to the most popular item succeeded!
+The prep stage was done successfully.
+
+
+Success!
+
+Job Stats (time in seconds):
+JobId   Maps    Reduces MaxMapTime      MinMapTIme      AvgMapTime      MedianMapTime   MaxReduceTime   MinReduceTime   AvgReduceTime   MedianReducetime        Alias   Feature Outputs
+job_201502200135_1570192        1       0       20      20      20      20      0       0       0       0       prodIdMap       MAP_ONLY        
+job_201502200135_1570194        9265    1000    2825    56      167     161     1341    498     824     807     reco,recoRaw,recoRawGrp,recoRawLimit,recoRawOrder       GROUP_BY        
+job_201502200135_1572155        1016    1000    248     30      61      57      219     41      132     146     cardClub,recoClub,recoClubJoin  HASH_JOIN       
+job_201502200135_1572414        1001    1000    234     31      111     109     179     36      88      100     recoItem,recoItemJoin,sc2item   HASH_JOIN       
+job_201502200135_1572780        997     1000    257     27      78      67      n/a     n/a     n/a     itemInfo,recoItemAttach0,recoItemJoinInfo       HASH_JOIN       
+job_201502200135_1573392        951     1000    551     64      140     132     670     168     439     527     recoItemAttach,recoItemAttach0Grp,recoItemAttach0Limit,recoItemAttach0Order,recoItemWeekly,recoItemWeekly0,recoItemWeekly0Join  REPLICATED_JOIN,GROUP_BY,STREAMING      
+job_201502200135_1574038        1000    400     402     71      132     121     407     286     342     340     recoGrp,recoItems,recoLimit,recoTop     GROUP_BY        
+job_201502200135_1574549        400     400     255     100     135     134     347     181     239     239     cardholders,recoMemGrp,recoOut  GROUP_BY        /user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_memberCard/2015-04-02/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_cnp.gz,
+
+Input(s):
+Successfully read 48606569565 records from: "/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_memberCard/2015-04-02/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_adj_study_scaled"
+Successfully read 106302566 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2015-04-01/tripleKey/all"
+Successfully read 855141 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2015-04-01/preference/clubSubcat2Item"
+Successfully read 1591601 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2015-04-01/itemInfo/dump"
+Successfully read 62018 records from: "/user/pythia/Workspaces/SamsMEP/mapping/systemItemNbr_catalogItemId_map/ds=2014-11-16-0600"
+
+Output(s):
+Successfully stored 20511311 records in: "/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_memberCard/2015-04-02/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_cnp.gz"
+
+Counters:
+Total records written : 20511311
+Total bytes written : 0
+Spillable Memory Manager spill count : 0
+Total bags proactively spilled: 271
+Total records proactively spilled: 1271192109
+
+Job DAG:
+job_201502200135_1570194        ->      job_201502200135_1572155,
+job_201502200135_1572155        ->      job_201502200135_1572414,
+job_201502200135_1572414        ->      job_201502200135_1572780,
+job_201502200135_1572780        ->      job_201502200135_1573392,
+job_201502200135_1570192        ->      job_201502200135_1573392,
+job_201502200135_1573392        ->      job_201502200135_1574038,
+job_201502200135_1574038        ->      job_201502200135_1574549,
+job_201502200135_1574549
+
+
+2015-04-03 11:35:22,276 [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MapReduceLauncher - Success!
+
+
+

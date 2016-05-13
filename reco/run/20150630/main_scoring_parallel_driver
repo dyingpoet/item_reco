@@ -1,0 +1,22 @@
+#! /bin/bash
+
+export PIG_HEAPSIZE=2096
+
+MAIN_SCRIPT_PATH=/home/jli21/project/reco/src/production/cnp_main
+
+source ./reco_membership_param.cfg
+
+source ${MAIN_SCRIPT_PATH}/support_driver
+if [[ $? != 0 ]]; then echo "The support module failed."; exit 1; fi
+
+source ${MAIN_SCRIPT_PATH}/prep_driver
+if [[ $? != 0 ]]; then echo "The prep module failed."; exit 1; fi
+
+###### membership scoring
+#bash ${MAIN_SCRIPT_PATH}/main_scoring_thread_membership ${MAIN_SCRIPT_PATH} 1>${LOG_DIR}/main_scoring_thread_membership.log 2>&1 &
+
+###### cardholder scoring
+source ./reco_cardholder_param.cfg
+bash ${MAIN_SCRIPT_PATH}/main_scoring_thread_cardholder ${MAIN_SCRIPT_PATH} 1>${LOG_DIR}/main_scoring_thread_cardholder.log 2>&1 &
+
+

@@ -1,0 +1,129 @@
+#! /bin/bash
+
+
+### refresh online data, dump to hdfs text: NOT required on prod6 as the online transaction is updated automatically
+
+
+
+echo "Membership-level recommendation scoring pipeline started at `date +'%Y-%m-%d %T'`." 
+
+if ! test -d ${LOG_DIR}; then mkdir -p ${LOG_DIR}; fi
+if ! test -d ${LOG_SUPPORT_DIR}; then mkdir -p ${LOG_SUPPORT_DIR}; fi
+if ! test -d ${LOG_PREP_DIR}; then mkdir -p ${LOG_PREP_DIR}; fi
+if ! test -d ${LOG_AGG_DIR}; then mkdir -p ${LOG_AGG_DIR}; fi
+if ! test -d ${LOG_CORE_DIR}; then mkdir -p ${LOG_CORE_DIR}; fi
+if ! test -d ${LOG_POST_DIR}; then mkdir -p ${LOG_POST_DIR}; fi
+if ! test -d ${LOG_OUTPUT_DIR}; then mkdir -p ${LOG_OUTPUT_DIR}; fi
+
+
+
+### aggregation of the time-decayed transaction/numVisits
+if [[ ! -e ${TOUCH1} ]]; then
+    #$Pig -p MemCombined=$MemCombined  \
+    $Pig -p MemCombined=$MemberTriplePaidCard \
+        -p ItemSubCatMapping=$ItemInfoSnapshot \
+        -p TransOffline=$TransOffline \
+        -p TransOnline=$TransOnline \
+        -p DataStartT=$DataStartT \
+        -p DataEndT=$DataEndT \
+        -p EligibleStartT=$EligibleStartT \
+        -p EligibleEndT=$EligibleEndT \
+        -p OnlineTrans=$TransOnline \
+        -p today=$DT \
+        -p OutStudySet=$TransAgg \
+        -f ${SRC_AGG_DIR}/create_study_set_rec_online_offline_updateSC_member.pig 1> ${LOG_AGG_DIR}/create_study_set_rec_online_offline_updateSC_member.log 2>&1
+        #-f ${SRC_AGG_DIR}/create_study_set_rec_online_offline_updateSC.pig 1> ${LOG_AGG_DIR}/create_study_set_rec_online_offline_updateSC.log 2>&1
+    if [[ $? -ne 0 ]]; then echo "Step 1: transaction agg failed!"; exit 1; else echo "Step 1: transaction agg succeeded!"; touch ${TOUCH1}; fi
+else
+    echo "Step 1: transaction agg was successfully run before!" 
+fi
+
+### transaction normalization
+if [[ ! -e ${TOUCH2} ]]; then
+    $Pig -p inputScore=$TransAgg -p outputScore=$TransDataPct -p nQtl=$N_QTL -p TaskDir=${SRC_AGG_DIR} -f ${SRC_AGG_DIR}/qtlScore.pig  1> ${LOG_AGG_DIR}/qtlScore.log 2>&1
+    if [[ $? -ne 0 ]]; then echo "Step 2: transaction normalization failed!"; exit 2; else echo "Step 2: transaction normalization succeeded!"; touch ${TOUCH2}; fi
+else
+    echo "Step 2: transaction normalization was successfully run before!" 
+fi
+
+### recommendation
+if [[ ! -e ${TOUCH3} ]]; then
+    $Pig -D mapred.cluster.reduce.memory.mb=4096  -D mapred.cluster.map.memory.mb=4096 -D mapred.task.timeout=3000000  -p transData=$TransDataPct \
+        -p subcat=$Subcat \
+        -p cobought=$Cobought \
+        -p seasonality=$Seasonality \
+        -p idf=$Idf \
+        -p targetMonth=$TargetMonth \
+        -p targetNumSubcats=$TargetNumSubcats \
+        -p targetIdf=N \
+        -p outputThreshold=1e-12 \
+        -p method=MaxCoboughtVisit \
+        -p core_dir=${SRC_CORE_DIR} \
+        -p output=$Output \
+        -f ${SRC_CORE_DIR}/CoboughtModelDebug.pig  1>${LOG_CORE_DIR}/CoboughtModelDebug.log 2>&1
+    if [[ $? -ne 0 ]]; then echo "Step 3: Core recommendation failed!"; exit 3; else echo "Step 3: Core recommendation succeeded!"; touch ${TOUCH3}; fi
+else
+    echo "Step 3: Core recommendation was successfully run before!" 
+fi
+
+### (member,item) preference
+#if [[ ! -e ${TOUCH4} ]]; then
+#    $Pig -p MemList=${MemCombined} \
+#        -p TransOnline=${TransOnline} \
+#        -p TransOffline=${TransOffline} \
+#        -p OUT=${MemberPref} \
+#        -p DateLB=${DateLB} \
+#        -p DateUB=${DateUB} \
+#        -p SPLB=${SPLB} \
+#        -p SPUB=${SPUB} \
+#        -p SplitDate=${SplitDate} \
+#        -p ItemSubCatMapping=${ItemInfoSnapshot} \
+#        -f ${SRC_POST_DIR}/item_member_preference.pig 1>${LOG_POST_DIR}/item_member_preference.log 2>&1
+#    if [[ $? -ne 0 ]]; then echo "Step 4: Member-item preference calculation failed!"; exit 4; else echo "Step 4: Member-item preference calculation succeeded!"; touch ${TOUCH4}; fi
+#else
+#    echo "Step 4: Member-item preference calculation was successfully run before!" 
+#fi
+
+### remind
+if [[ ! -e ${TOUCH5} ]]; then
+    #$Pig -p RecoRemind=$RecoRemind -p RecoScore=$RecoScore -p RemindSet=$MemberPref -f ${SRC_POST_DIR}/recoAdj.pig 1>${LOG_POST_DIR}/recoAdj.log 2>&1
+    $Pig -p RecoRemind=$RecoRemind -p RecoScore=$RecoScore -p RemindSet=$ItemPrefMembership -f ${SRC_POST_DIR}/recoAdj.pig 1>${LOG_POST_DIR}/recoAdj.log 2>&1
+    if [[ $? -ne 0 ]]; then echo "Step 5: Remind failed!"; exit 5; else echo "Step 5: Remind succeeded!"; touch ${TOUCH5}; fi
+else
+    echo "Step 5: Remind was successfully run before!" 
+fi
+
+### subcat scope
+if [[ ! -e ${TOUCH6} ]]; then
+    $Pig -p RecoScore=$RecoRemind -p StudySet=$StudySet -p recoStudy=$RecoStudy -p recoStudyMax=$RecoStudyMax -f ${SRC_POST_DIR}/joinStudySet.pig 1>${LOG_POST_DIR}/joinStudySet.log 2>&1
+    if [[ $? -ne 0 ]]; then echo "Step 6: Subcat scoping failed!"; exit 6; else echo "Step 6: Subcat scoping succeeded!"; touch ${TOUCH6}; fi
+else
+    echo "Step 6: Subcat scoping was successfully run before!" 
+fi
+
+### score normalization
+max=`hadoop fs -cat ${RecoStudyMax}/pa*`
+echo $max
+if [[ ! -e ${TOUCH7} ]]; then
+    $Pig -p RecoScore=$RecoStudy -p recoStudyScaled=$RecoStudyScaled -p max=$max -f ${SRC_POST_DIR}/scaling.pig 1>${LOG_POST_DIR}/scaling.log 2>&1
+    
+    if [[ $? -ne 0 ]]; then 
+        echo "Step 7: Score normalization failed!"; exit 6; 
+    else 
+        echo "Step 7: Score normalization succeeded!"; touch ${TOUCH7};
+        hadoop fs -rmr $RecoScore
+        hadoop fs -rmr $RecoRemind
+        hadoop fs -rmr $RecoStudy
+        echo "Recommendation scores can be found at ${RecoStudyScaled}."
+        echo "Membership-level recommendation scoring pipeline done at `date +'%Y-%m-%d %T'`." 
+        #exit 0;
+    fi
+else
+    echo "Step 7: Score normalization was successfully run before!" 
+fi
+
+echo "The membership-level pipeline had been successfully run before. Please check!"
+
+
+
+

@@ -1,0 +1,48 @@
+Time taken: 102.897 seconds
+Item info dumping was successful.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2015-08-04/landing/clubItemLandingDir does not exist.
+Club-availability dummping was successful.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2015-08-04/landing/paidCardPreferClubLandingDir does not exist.
+Dumped the paid cards to hdfs: /user/jli21/pythia/Workspaces/CNP/reco/2015-08-04/landing/paidCardPreferClubLandingDir/.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2015-08-04/landing/allCardPreferClubLandingDir does not exist.
+Dumped all cards to hdfs: /user/jli21/pythia/Workspaces/CNP/reco/2015-08-04/landing/allCardPreferClubLandingDir/.
+Paid card club rolling succeeded!
+All card club rolling succeeded!
+Club item popularity rolling succeeded!
+Member item popularity rolling succeeded!
+Card item popularity rolling succeeded!
+Mapping from a sub-cat to the most popular item succeeded!
+The prep stage was done successfully.
+You have new mail in /var/spool/mail/jli21
+
+
+x_cosine_cobought_transaction_debug_cnp.gz,
+
+Input(s):
+Successfully read 49467866301 records from: "/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_memberCard/2015-06-09/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_adj_study_scaled"
+Successfully read 105965805 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2015-06-08/tripleKey/all"
+Successfully read 874347 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2015-06-08/preference/clubSubcat2Item"
+Successfully read 1611446 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2015-06-08/itemInfo/dump"
+Successfully read 62018 records from: "/user/pythia/Workspaces/SamsMEP/mapping/systemItemNbr_catalogItemId_map/ds=2014-11-16-0600"
+
+Output(s):
+Successfully stored 20279762 records in: "/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_memberCard/2015-06-09/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_cnp.gz"
+
+Counters:
+Total records written : 20279762
+
+
+
+Input(s):
+Successfully read 50096060370 records from: "/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_memberCard/2015-08-05/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_adj_study_scaled"
+Successfully read 104324538 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2015-08-04/tripleKey/all"
+Successfully read 889277 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2015-08-04/preference/clubSubcat2Item"
+Successfully read 1628335 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2015-08-04/itemInfo/dump"
+Successfully read 62018 records from: "/user/pythia/Workspaces/SamsMEP/mapping/systemItemNbr_catalogItemId_map/ds=2014-11-16-0600"
+
+Output(s):
+Successfully stored 20100469 records in: "/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_memberCard/2015-08-05/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_cnp.gz"
+
+
+
+

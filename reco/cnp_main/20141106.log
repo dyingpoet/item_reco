@@ -1,0 +1,28 @@
+./main_scoring_parallel_driver 
+COB_DT=2014-11-04
+SEASONALITY_DT=2014-09-09
+Cobought=/user/jli21/sams/cf/prep/cobought/2014-11-04/cosine/cobought_2014-11-04_1
+Seasonality=/user/jli21/sams/cf/prep/seasonality/fixed/2014-09-09
+Logging initialized using configuration in file:/etc/hive/conf.bfd-puppet/hive-log4j.properties
+Hive history file=/data1/hive/jli21/hive_job_log_jli21_201411062340_698401076.txt
+OK
+Time taken: 1.601 seconds
+Weekly=/user/jli21/data/seasonality/weekly/2014-11-04
+The item info snapshot had already been generated!
+The cobought score was already there. No action needed.
+Number of RECO subcat: 2559
+The seasonality table was already there. No action needed.
+The weekly table was already there. No action needed.
+start the prep stage!
+Item info dummping was run successfully before!
+Club-availability dummping was run successfully before!
+Paid cards dummping dummping was run successfully before!
+All cards dummping was run successfully before!
+Paid card club rolling was successfully run before!
+All card club rolling was successfully run before!
+Club item popularity rolling was successfully run before!
+Member item popularity rolling was successfully run before!
+Card item popularity rolling was successfully run before!
+Mapping from a sub-cat to the most popular item was successfully run before!
+The prep stage was done successfully.
+

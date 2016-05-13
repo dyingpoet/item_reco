@@ -1,0 +1,18 @@
+2015-01-11 22:28:55,288 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 9218.87 sec
+2015-01-11 22:28:56,344 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 9218.87 sec
+2015-01-11 22:28:57,458 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 9280.89 sec
+MapReduce Total cumulative CPU time: 0 days 2 hours 34 minutes 40 seconds 890 msec
+Ended Job = job_201501081236_114063
+Moving data to: /user/jli21/pythia/Workspaces/SamsMEP/Recommend/Scoring/ItemLevel/2014-11-24/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug
+2015-01-11 22:28:58,2050 ERROR JniCommon fs/client/fileclient/cc/jni_common.cc:2133 Thread: 140582858225408 rename: File /user/jli21/pythia/Workspaces/SamsMEP/Recommend/Scoring/ItemLev, LookupFid rpc error = 2
+Failed with exception Invalid source or target
+FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.MoveTask
+MapReduce Jobs Launched: 
+Job 0: Map: 1   Cumulative CPU: 129.24 sec   MAPRFS Read: 327236240 MAPRFS Write: 131015593 SUCCESS
+Job 1: Map: 92  Reduce: 4   Cumulative CPU: 6280.19 sec   MAPRFS Read: 2445913003 MAPRFS Write: 17156229560 SUCCESS
+Job 2: Map: 56  Reduce: 4   Cumulative CPU: 22088.57 sec   MAPRFS Read: 177037376275 MAPRFS Write: 167244048066 SUCCESS
+Job 3: Map: 113  Reduce: 4   Cumulative CPU: 9280.89 sec   MAPRFS Read: 80742034279 MAPRFS Write: 93531129897 SUCCESS
+Total MapReduce CPU Time Spent: 0 days 10 hours 29 minutes 38 seconds 890 msec
+[jli21@sg-dev01 main]$ hd -du /user/jli21/
+
+

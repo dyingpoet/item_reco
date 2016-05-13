@@ -1,0 +1,30 @@
+MapReduce Total cumulative CPU time: 47 seconds 810 msec
+Ended Job = job_201412091829_240384
+Ended Job = -814075675, job is filtered out (removed at runtime).
+Moving data to: maprfs:/user/jli21/tmp/hive_2014-12-17_17-29-27_865_6210386755693884083/-ext-10000
+Moving data to: /user/jli21/pythia/Workspaces/CNP/reco/2014-12-16/itemInfo/dump
+1561502 Rows loaded to /user/jli21/pythia/Workspaces/CNP/reco/2014-12-16/itemInfo/dump
+MapReduce Jobs Launched:
+Job 0: Map: 2   Cumulative CPU: 47.81 sec   MAPRFS Read: 530474059 MAPRFS Write: 62034160 SUCCESS
+Total MapReduce CPU Time Spent: 47 seconds 810 msec
+OK
+Time taken: 93.082 seconds
+Item info dumping was successful.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2014-12-16/landing/clubItemLandingDir does not exist.
+Club-availability dummping was successful.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2014-12-16/landing/paidCardPreferClubLandingDir does not exist.
+Dumped the paid cards to hdfs: /user/jli21/pythia/Workspaces/CNP/reco/2014-12-16/landing/paidCardPreferClubLandingDir/.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2014-12-16/landing/allCardPreferClubLandingDir does not exist.
+
+
+
+
+Dumped all cards to hdfs: /user/jli21/pythia/Workspaces/CNP/reco/2014-12-16/landing/allCardPreferClubLandingDir/.
+Paid card club rolling succeeded!
+All card club rolling succeeded!
+Club item popularity rolling succeeded!
+Member item popularity rolling succeeded!
+Card item popularity rolling succeeded!
+Mapping from a sub-cat to the most popular item succeeded!
+The prep stage was done successfully.
+

@@ -1,0 +1,23 @@
+DS_RUN=2015-08-05
+SeasonalityStartDate=2014-07-06
+SeasonalityEndDate=2015-07-01
+./reco_membership_param.cfg: line 107: [[: 08: value too great for base (error token is "08")
+COB_DT=2015-07-28
+SEASONALITY_DT=2015-07-28
+Cobought=/user/jli21/sams/cf/prep/cobought/2015-07-28/cosine/cobought_2015-07-28_1
+Seasonality=/user/jli21/data/seasonality/combined/fixed/2015-07-28
+This is *bfd-main*.
+^C
+
+
+hd -cat /user/pythia/final_weekly_update.txt
+cobought_tbl,ds,2015-07-28
+seasonality_tbl,start_of_month,2015-07-28
+item_cobought_tbl,ds,2015-07-28
+item_seasonality_tbl,start_of_month,2015-06-01
+cat_cobought_tbl,ds,2015-07-28
+cat_seasonality_tbl,start_of_month,2015-07-28
+
+
+
+

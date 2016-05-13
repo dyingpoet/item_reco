@@ -1,0 +1,13 @@
+/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp/member/2014-10-31/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_cnp.gz
+/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp/memberCard/2014-10-31/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_cnp.gz
+/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp/member/2014-10-31/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_wmx
+
+reward
+/user/ucidscs/Databases/sams_member_scores_WMX
+
+Input(s):
+Successfully read 45475657147 records from: "/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp/member/2014-10-31/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_wmx"
+
+Output(s):
+Successfully stored 1 records in: "/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp/member/2014-10-31/Decay/reco_mean"
+Successfully stored 1 records in: "/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp/member/2014-10-31/Decay/reward_mean"

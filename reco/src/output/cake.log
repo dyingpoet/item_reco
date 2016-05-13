@@ -1,0 +1,31 @@
+
+HadoopVersion	PigVersion	UserId	StartedAt	FinishedAt	Features
+1.0.3	0.11.2-mapr	jli21	2015-05-07 00:06:24	2015-05-07 00:16:27	FILTER
+
+Success!
+
+Job Stats (time in seconds):
+JobId	Maps	Reduces	MaxMapTime	MinMapTIme	AvgMapTime	MedianMapTime	MaxReduceTime	MinReduceTime	AvgReduceTime	MedianReducetime	Alias	Feature	Outputs
+job_201502200135_3208335	9265	0	130	20	42	42	0	0	0	0	recoOrig,recoOrigFlt	MAP_ONLY	maprfs:/user/jli21/recoOrigFlt,
+
+Input(s):
+Successfully read 48606569565 records from: "/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_memberCard/2015-04-02/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_adj_study_scaled"
+
+Output(s):
+Successfully stored 1465 records in: "maprfs:/user/jli21/recoOrigFlt"
+
+Counters:
+Total records written : 1465
+Total bytes written : 0
+Spillable Memory Manager spill count : 0
+Total bags proactively spilled: 0
+Total records proactively spilled: 0
+
+Job DAG:
+job_201502200135_3208335
+
+
+2015-05-07 00:16:28,567 [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MapReduceLauncher - Success!
+
+
+

@@ -1,0 +1,63 @@
+Logging initialized using configuration in file:/etc/hive/conf.bfd-puppet/hive-log4j.properties
+Total jobs = 3
+Launching Job 1 out of 3
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_201510201840_84821, Tracking URL = http://mapr300.sv.walmartlabs.com:50030/jobdetails.jsp?jobid=job_201510201840_84821
+Kill Command = /opt/mapr/hadoop/hadoop-0.20.2/bin/../bin/hadoop job  -kill job_201510201840_84821
+Hadoop job information for Stage-1: number of mappers: 3; number of reducers: 0
+2015-10-22 13:46:51,257 Stage-1 map = 0%,  reduce = 0%
+2015-10-22 13:47:03,260 Stage-1 map = 33%,  reduce = 0%, Cumulative CPU 8.36 sec
+2015-10-22 13:47:19,735 Stage-1 map = 67%,  reduce = 0%, Cumulative CPU 23.14 sec
+2015-10-22 13:47:28,399 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 29.66 sec
+MapReduce Total cumulative CPU time: 29 seconds 660 msec
+Ended Job = job_201510201840_84821
+Stage-3 is selected by condition resolver.
+Stage-2 is filtered out by condition resolver.
+Stage-4 is filtered out by condition resolver.
+Moving data to: maprfs:/user/jli21/tmp/hive_2015-10-22_13-46-43_213_2124452067749324450-1/-ext-10000
+Moving data to: /user/jli21/pythia/Workspaces/CNP/reco/2015-10-21/itemInfo/dump
+MapReduce Jobs Launched:
+Job 0: Map: 3   Cumulative CPU: 29.66 sec   MAPRFS Read: 571257826 MAPRFS Write: 66929432 SUCCESS
+Total MapReduce CPU Time Spent: 29 seconds 660 msec
+OK
+Time taken: 52.912 seconds
+Item info dumping was successful.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2015-10-21/landing/clubItemLandingDir does not exist.
+Club-availability dummping was successful.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2015-10-21/landing/paidCardPreferClubLandingDir does not exist.
+Dumped the paid cards to hdfs: /user/jli21/pythia/Workspaces/CNP/reco/2015-10-21/landing/paidCardPreferClubLandingDir/.
+test: Requested file /user/jli21/pythia/Workspaces/CNP/reco/2015-10-21/landing/allCardPreferClubLandingDir does not exist.
+Dumped all cards to hdfs: /user/jli21/pythia/Workspaces/CNP/reco/2015-10-21/landing/allCardPreferClubLandingDir/.
+Paid card club rolling succeeded!
+All card club rolling succeeded!
+Club item popularity rolling succeeded!
+
+
+
+
+Member item popularity rolling succeeded!
+Card item popularity rolling succeeded!
+Mapping from a sub-cat to the most popular item succeeded!
+The prep stage was done successfully.
+You have new mail in /var/spool/mail/jli21
+
+
+
+Input(s):
+Successfully read 52708880323 records from: "/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_memberCard/2015-10-22/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_adj_study_scaled"
+Successfully read 106129850 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2015-10-21/tripleKey/all"
+Successfully read 892664 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2015-10-21/preference/clubSubcat2Item"
+Successfully read 1650917 records from: "/user/jli21/pythia/Workspaces/CNP/reco/2015-10-21/itemInfo/dump"
+Successfully read 62018 records from: "/user/pythia/Workspaces/SamsMEP/mapping/systemItemNbr_catalogItemId_map/ds=2014-11-16-0600"
+
+Output(s):
+Successfully stored 20518389 records in: "/user/pythia/Workspaces/SamsMEP/Recommend/Scoring/cnp_memberCard/2015-10-22/Decay/recommend_score_cobought_no_smoothing_max_cosine_cobought_transaction_debug_cnp.gz"
+
+Counters:
+Total records written : 20518389
+Total bytes written : 0
+Spillable Memory Manager spill count : 0
+Total bags proactively spilled: 197
+Total records proactively spilled: 1011014152
+
+

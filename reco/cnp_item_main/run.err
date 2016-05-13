@@ -1,0 +1,37 @@
+Logging initialized using configuration in file:/etc/hive/conf.bfd-puppet/hive-log4j.properties
+OK
+Time taken: 0.755 seconds, Fetched: 1000 row(s)
+Weekly=/user/jli21/data/seasonality/weekly/2015-05-19
+The item info snapshot had already been generated!
+The weekly table was already there. No action needed.
+start the prep stage!
+Deleted maprfs:/user/jli21/pythia/Workspaces/CNP/reco/2015-05-25/itemInfo/dump
+
+Logging initialized using configuration in file:/etc/hive/conf.bfd-puppet/hive-log4j.properties
+Total jobs = 3
+Launching Job 1 out of 3
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_201506160920_15598, Tracking URL = http://mapr300.sv.walmartlabs.com:50030/jobdetails.jsp?jobid=job_201506160920_15598
+Kill Command = /opt/mapr/hadoop/hadoop-0.20.2/bin/../bin/hadoop job  -kill job_201506160920_15598
+Hadoop job information for Stage-1: number of mappers: 3; number of reducers: 0
+2015-06-16 16:01:04,807 Stage-1 map = 33%,  reduce = 0%, Cumulative CPU 5.02 sec
+MapReduce Total cumulative CPU time: 5 seconds 20 msec
+Ended Job = job_201506160920_15598
+Stage-3 is selected by condition resolver.
+Stage-2 is filtered out by condition resolver.
+Stage-4 is filtered out by condition resolver.
+Moving data to: maprfs:/user/jli21/tmp/hive_2015-06-16_16-00-12_594_7257115970879627603-1/-ext-10000
+Moving data to: /user/jli21/pythia/Workspaces/CNP/reco/2015-05-25/itemInfo/dump
+MapReduce Jobs Launched: 
+Job 0: Map: 3   Cumulative CPU: 38.23 sec   MAPRFS Read: 555380837 MAPRFS Write: 64535531 SUCCESS
+Total MapReduce CPU Time Spent: 38 seconds 230 msec
+OK
+Time taken: 103.126 seconds
+Item info dumping was successful.
+Club-availability dummping was run successfully before!
+Paid cards dummping dummping was run successfully before!
+All cards dummping was run successfully before!
+Paid card club rolling failed!
+
+
+
